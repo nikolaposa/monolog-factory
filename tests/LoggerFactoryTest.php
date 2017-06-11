@@ -9,6 +9,7 @@ use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\ScalarFormatter;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
+use Monolog\Handler\RavenHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -159,6 +160,24 @@ class LoggerFactoryTest extends TestCase
         $this->assertAttributeEquals('Test', 'subject', $handler);
         $this->assertAttributeContains('From: noreply@example.com', 'headers', $handler);
         $this->assertEquals(Logger::ALERT, $handler->getLevel());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_handler_with_nested_objects()
+    {
+        /* @var $handler RavenHandler */
+        $handler = $this->factory->createHandler(RavenHandler::class, [
+            'raven_client' => [
+                'options_or_dsn' => 'https://key:secret@sentry.io/test',
+            ],
+            'level' => Logger::ERROR,
+        ]);
+
+        $this->assertInstanceOf(RavenHandler::class, $handler);
+        $this->assertAttributeInstanceOf(\Raven_Client::class, 'ravenClient', $handler);
+        $this->assertEquals(Logger::ERROR, $handler->getLevel());
     }
 
     /**
