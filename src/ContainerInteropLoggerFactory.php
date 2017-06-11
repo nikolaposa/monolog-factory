@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace MonologFactory;
 
 use Interop\Container\ContainerInterface;
-use Monolog\Logger;
-use Monolog\Handler\HandlerInterface;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Handler\HandlerInterface;
+use Monolog\Logger;
+use MonologFactory\Exception\InvalidArgumentException;
+use MonologFactory\Exception\InvalidContainerServiceException;
 
 class ContainerInteropLoggerFactory
 {
@@ -42,30 +44,33 @@ class ContainerInteropLoggerFactory
         return $this->createLogger($loggerConfig);
     }
 
-    public static function __callStatic($name, $arguments)
+    public static function __callStatic(string $name, array $arguments) : Logger
     {
-        // TODO: Implement __callStatic() method.
+        if (0 === count($arguments) || ! ($container = current($arguments)) instanceof ContainerInterface) {
+            throw new InvalidArgumentException(sprintf(
+                'The first argument for %s method must be of type %s',
+                __FUNCTION__,
+                ContainerInterface::class
+            ));
+        }
+
+        return (new static($name))->__invoke($container);
     }
 
     protected function getLoggerConfig(string $loggerName) : array
     {
         $config = $this->container->has('Config') ? $this->container->get('Config') : [];
-        $monologConfig = $config[self::CONFIG_KEY] ?? [];
-        $loggerConfig = $monologConfig[$loggerName] ?? [];
+        $loggersConfig = $config[self::CONFIG_KEY] ?? [];
+        $loggerConfig = $loggersConfig[$loggerName] ?? [];
 
         return array_merge(
-            $this->getDefaultLoggerConfig($loggerName),
+            [
+                'name' => $loggerName,
+                'handlers' => [],
+                'processors' => [],
+            ],
             $loggerConfig
         );
-    }
-
-    protected function getDefaultLoggerConfig(string $loggerName) : array
-    {
-        return [
-            'name' => $loggerName,
-            'handlers' => [],
-            'processors' => [],
-        ];
     }
 
     protected function createLogger(array $config) : Logger
@@ -74,17 +79,17 @@ class ContainerInteropLoggerFactory
         unset($config['name']);
 
         if (is_array($config['handlers'])) {
-            $config['handlers'] = $this->marshalHandlers($config['handlers']);
+            $config['handlers'] = $this->prepareHandlers($config['handlers']);
         }
 
         if (is_array($config['processors'])) {
-            $config['processors'] = $this->marshalProcessors($config['processors']);
+            $config['processors'] = $this->prepareProcessors($config['processors']);
         }
 
         return $this->getLoggerFactory()->createLogger($name, $config);
     }
 
-    protected function marshalHandlers(array $handlers) : array
+    protected function prepareHandlers(array $handlers) : array
     {
         return array_map(function ($handler) {
             if (is_string($handler)) {
@@ -99,7 +104,7 @@ class ContainerInteropLoggerFactory
         }, $handlers);
     }
 
-    protected function marshalProcessors(array $processors) : array
+    protected function prepareProcessors(array $processors) : array
     {
         return array_map(function ($processor) {
             if (is_string($processor)) {
@@ -110,22 +115,52 @@ class ContainerInteropLoggerFactory
         }, $processors);
     }
 
-    protected function resolveHandler(string $handler) : HandlerInterface
+    protected function resolveHandler(string $handlerName) : HandlerInterface
     {
-        return $this->resolveFromContainer($handler, 'handler');
+        $handler = $this->resolveFromContainer($handlerName);
+
+        if (null === $handler) {
+            throw InvalidContainerServiceException::forUnresolved('handler', $handlerName);
+        }
+
+        if (! $handler instanceof HandlerInterface) {
+            throw InvalidContainerServiceException::forInvalid('handler', $handlerName, HandlerInterface::class);
+        }
+
+        return $handler;
     }
 
-    protected function resolveFormatter($formatter) : FormatterInterface
+    protected function resolveFormatter(string $formatterName) : FormatterInterface
     {
-        return $this->resolveFromContainer($formatter, 'formatter');
+        $formatter = $this->resolveFromContainer($formatterName);
+
+        if (null === $formatter) {
+            throw InvalidContainerServiceException::forUnresolved('formatter', $formatterName);
+        }
+
+        if (! $formatter instanceof FormatterInterface) {
+            throw InvalidContainerServiceException::forInvalid('formatter', $formatterName, FormatterInterface::class);
+        }
+
+        return $formatter;
     }
 
-    protected function resolveProcessor($processor) : callable
+    protected function resolveProcessor(string $processorName) : callable
     {
-        return $this->resolveFromContainer($processor, 'processor');
+        $processor = $this->resolveFromContainer($processorName);
+
+        if (null === $processor) {
+            throw InvalidContainerServiceException::forUnresolved('processor', $processorName);
+        }
+
+        if (! is_callable($processor)) {
+            throw InvalidContainerServiceException::forInvalid('processor', $processorName, 'callable');
+        }
+
+        return $processor;
     }
 
-    final protected function resolveFromContainer(string $serviceOrFactory, string $type)
+    final protected function resolveFromContainer(string $serviceOrFactory)
     {
         if ($this->container->has($serviceOrFactory)) {
             return $this->container->get($serviceOrFactory);
@@ -136,7 +171,7 @@ class ContainerInteropLoggerFactory
             return $factory($this->container);
         }
 
-        throw new \InvalidArgumentException(sprintf('%s %s could not be resolved neither as a service or a factory', $serviceOrFactory, $type));
+        return null;
     }
 
     final protected function getLoggerFactory() : LoggerFactory
