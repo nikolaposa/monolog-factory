@@ -8,7 +8,7 @@
 
 Monolog Factory facilitates creation of [Monolog][link-monolog] logger objects.
 
-Besides the default factory, this package features one that is suitable for using Monolog with [container-interop][link-container-interop].
+Besides the generic factory, this package features one that is suitable for using Monolog with [container-interop][link-container-interop].
 
 ## Installation
 
@@ -20,7 +20,7 @@ composer require nikolaposa/monolog-factory
 
 ## Usage
 
-**Default factory**
+**Generic factory**
 
 ``` php
 use Monolog\Formatter\HtmlFormatter;
