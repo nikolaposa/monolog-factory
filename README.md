@@ -96,6 +96,8 @@ return [
 ];
 ```
 
+See [more examples][link-examples].
+
 ## Credits
 
 - [Nikola Poša][link-author]
@@ -112,6 +114,9 @@ Released under MIT License - see the [License File](LICENSE) for details.
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/nikolaposa/monolog-factory.svg
 [ico-pds]: https://img.shields.io/badge/pds-skeleton-blue.svg
 
+[link-monolog]: https://github.com/Seldaek/monolog
+[link-container-interop]: https://github.com/container-interop/container-interop
+[link-examples]: examples
 [link-packagist]: https://packagist.org/packages/nikolaposa/monolog-factory
 [link-build]: https://travis-ci.org/nikolaposa/monolog-factory
 [link-code-coverage]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/code-structure
@@ -119,5 +124,3 @@ Released under MIT License - see the [License File](LICENSE) for details.
 [link-pds]: https://github.com/php-pds/skeleton
 [link-author]: https://github.com/nikolaposa
 [link-contributors]: ../../contributors
-[link-monolog]: https://github.com/Seldaek/monolog
-[link-container-interop]: https://github.com/container-interop/container-interop
