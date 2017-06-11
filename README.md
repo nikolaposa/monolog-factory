@@ -90,7 +90,9 @@ return [
     ],
     'di' => [
         'factories' => [
-            'MyLogger' => [ContainerInteropLoggerFactory::class, 'my_logger'],
+            'MyLogger1' => new ContainerInteropLoggerFactory('my_logger'),
+            //... or more preferred/optimal way:
+            'MyLogger2' => [ContainerInteropLoggerFactory::class, 'my_logger'],
         ],
     ],
 ];
