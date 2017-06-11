@@ -12,6 +12,8 @@ use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
 use MonologFactory\ContainerInteropLoggerFactory;
+use MonologFactory\Exception\InvalidArgumentException;
+use MonologFactory\Exception\InvalidContainerServiceException;
 use MonologFactory\Tests\TestAsset\ContainerAsset;
 use MonologFactory\Tests\TestAsset\Logger\ProcessorFactoryAsset;
 use PHPUnit\Framework\TestCase;
@@ -67,6 +69,12 @@ class ContainerInteropLoggerFactoryTest extends TestCase
                         ],
                         'processors' => [
                             ProcessorFactoryAsset::class,
+                        ],
+                    ],
+                    'invalid_logger' => [
+                        'name' => 'invalid_logger',
+                        'handlers' => [
+                            'NonExistingHandler',
                         ],
                     ],
                 ],
@@ -125,6 +133,25 @@ class ContainerInteropLoggerFactoryTest extends TestCase
     /**
      * @test
      */
+    public function it_raises_exception_if_container_not_passed_in_arguments_when_invoked_using_static_variance()
+    {
+        $factory = [ContainerInteropLoggerFactory::class, 'logger1'];
+
+        try {
+            call_user_func($factory, 'invalid');
+
+            $this->fail('Exception should have been raised');
+        } catch (InvalidArgumentException $ex) {
+            $this->assertEquals(
+                'The first argument for MonologFactory\\ContainerInteropLoggerFactory::__callStatic method must be of type Interop\\Container\\ContainerInterface',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
     public function it_creates_logger_by_resolving_handler_from_container()
     {
         $factory = new ContainerInteropLoggerFactory('logger2');
@@ -138,6 +165,25 @@ class ContainerInteropLoggerFactoryTest extends TestCase
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(NullHandler::class, $handlers[1]);
         $this->assertInstanceOf(NativeMailerHandler::class, $handlers[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_raises_exception_if_handler_cannot_be_resolved_from_container()
+    {
+        $factory = new ContainerInteropLoggerFactory('invalid_logger');
+
+        try {
+            $factory($this->container);
+
+            $this->fail('Exception should have been raised');
+        } catch (InvalidContainerServiceException $ex) {
+            $this->assertEquals(
+                'NonExistingHandler handler has not been found in the DI container',
+                $ex->getMessage()
+            );
+        }
     }
 
     /**

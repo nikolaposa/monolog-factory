@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace MonologFactory\Exception;
 
-use InvalidArgumentException;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 
-class InvalidOptionsException extends InvalidArgumentException implements ExceptionInterface
+class InvalidOptionsException extends InvalidArgumentException
 {
     public static function forInvalidHandlers($handlers)
     {

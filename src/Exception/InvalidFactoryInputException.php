@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MonologFactory\Exception;
 
-use InvalidArgumentException;
-
-class InvalidFactoryInputException extends InvalidArgumentException implements ExceptionInterface
+class InvalidFactoryInputException extends InvalidArgumentException
 {
     public static function forMissingName()
     {

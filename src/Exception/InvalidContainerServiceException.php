@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace MonologFactory\Exception;
 
-use RuntimeException;
-
-class InvalidContainerServiceException extends RuntimeException implements ExceptionInterface
+class InvalidContainerServiceException extends \RuntimeException implements ExceptionInterface
 {
     public static function forUnresolved(string $type, string $name)
     {

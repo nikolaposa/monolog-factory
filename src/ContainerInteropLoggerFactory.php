@@ -49,7 +49,7 @@ class ContainerInteropLoggerFactory
         if (0 === count($arguments) || ! ($container = current($arguments)) instanceof ContainerInterface) {
             throw new InvalidArgumentException(sprintf(
                 'The first argument for %s method must be of type %s',
-                __FUNCTION__,
+                __METHOD__,
                 ContainerInterface::class
             ));
         }
