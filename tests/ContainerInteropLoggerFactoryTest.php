@@ -163,8 +163,8 @@ class ContainerInteropLoggerFactoryTest extends TestCase
         $this->assertEquals('logger2', $logger->getName());
         $handlers = $logger->getHandlers();
         $this->assertCount(2, $handlers);
-        $this->assertInstanceOf(NullHandler::class, $handlers[1]);
-        $this->assertInstanceOf(NativeMailerHandler::class, $handlers[0]);
+        $this->assertInstanceOf(NullHandler::class, $handlers[0]);
+        $this->assertInstanceOf(NativeMailerHandler::class, $handlers[1]);
     }
 
     /**
@@ -200,8 +200,8 @@ class ContainerInteropLoggerFactoryTest extends TestCase
         $this->assertEquals('logger2', $logger->getName());
         $handlers = $logger->getHandlers();
         $this->assertCount(2, $handlers);
-        $this->assertInstanceOf(NativeMailerHandler::class, $handlers[0]);
-        $this->assertInstanceOf(HtmlFormatter::class, $handlers[0]->getFormatter());
+        $this->assertInstanceOf(NativeMailerHandler::class, $handlers[1]);
+        $this->assertInstanceOf(HtmlFormatter::class, $handlers[1]->getFormatter());
     }
 
     /**

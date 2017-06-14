@@ -10,6 +10,7 @@ use Monolog\Formatter\ScalarFormatter;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RavenHandler;
+use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -113,6 +114,62 @@ class LoggerFactoryTest extends TestCase
 
         $processor = current($logger->getProcessors());
         $this->assertInstanceOf(PsrLogMessageProcessor::class, $processor);
+    }
+
+    /**
+     * @test
+     */
+    public function it_properly_orders_handlers_when_creating_logger()
+    {
+        $logger = $this->factory->createLogger('test', [
+            'handlers' => [
+                [
+                    'name' => TestHandler::class,
+                ],
+                [
+                    'name' => NullHandler::class,
+                ],
+            ],
+            'processors' => [
+                [
+                    'name' => PsrLogMessageProcessor::class,
+                ],
+            ],
+        ]);
+
+        $this->assertInstanceOf(Logger::class, $logger);
+        $handlers = $logger->getHandlers();
+        $this->assertCount(2, $handlers);
+        $this->assertInstanceOf(TestHandler::class, $handlers[0]);
+        $this->assertInstanceOf(NullHandler::class, $handlers[1]);
+    }
+
+    /**
+     * @test
+     */
+    public function it_properly_orders_processors_when_creating_logger()
+    {
+        $logger = $this->factory->createLogger('test', [
+            'handlers' => [
+                [
+                    'name' => NullHandler::class,
+                ],
+            ],
+            'processors' => [
+                [
+                    'name' => MemoryUsageProcessor::class,
+                ],
+                [
+                    'name' => PsrLogMessageProcessor::class,
+                ],
+            ],
+        ]);
+
+        $this->assertInstanceOf(Logger::class, $logger);
+        $processors = $logger->getProcessors();
+        $this->assertCount(2, $processors);
+        $this->assertInstanceOf(MemoryUsageProcessor::class, $processors[0]);
+        $this->assertInstanceOf(PsrLogMessageProcessor::class, $processors[1]);
     }
 
     /**

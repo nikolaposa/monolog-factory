@@ -26,11 +26,11 @@ class LoggerFactory
         
         $logger = new Logger($name);
         
-        foreach ($options->getHandlers() as $handler) {
+        foreach (array_reverse($options->getHandlers()) as $handler) {
             $logger->pushHandler($this->createHandlerFromOptions($handler));
         }
 
-        foreach ($options->getProcessors() as $processor) {
+        foreach (array_reverse($options->getProcessors()) as $processor) {
             $logger->pushProcessor($this->createProcessorFromOptions($processor));
         }
 
