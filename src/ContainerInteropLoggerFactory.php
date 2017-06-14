@@ -59,9 +59,15 @@ class ContainerInteropLoggerFactory
 
     protected function getLoggerConfig(string $loggerName) : array
     {
-        $config = $this->container->has('Config') ? $this->container->get('Config') : [];
-        $loggersConfig = $config[self::CONFIG_KEY] ?? [];
-        $loggerConfig = $loggersConfig[$loggerName] ?? [];
+        $config = [];
+        foreach (['config', 'Config'] as $configServiceName) {
+            if ($this->container->has($configServiceName)) {
+                $config = $this->container->get($configServiceName);
+                break;
+            }
+        }
+        
+        $loggerConfig = $config[self::CONFIG_KEY][$loggerName] ?? [];
 
         return array_merge(
             [

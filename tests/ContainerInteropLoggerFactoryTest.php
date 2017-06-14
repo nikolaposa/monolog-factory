@@ -8,6 +8,7 @@ use Interop\Container\ContainerInterface;
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
+use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -99,6 +100,33 @@ class ContainerInteropLoggerFactoryTest extends TestCase
         $this->assertEquals('logger1', $logger->getName());
         $this->assertCount(1, $logger->getHandlers());
         $this->assertCount(1, $logger->getProcessors());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_from_alias_configuration_service()
+    {
+        $factory = new ContainerInteropLoggerFactory('logger3');
+
+        /* @var $logger Logger */
+        $logger = $factory(new ContainerAsset([
+            'config' => [
+                'logger' => [
+                    'logger3' => [
+                        'name' => 'logger3',
+                        'handlers' => [
+                            [
+                                'name' => TestHandler::class,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]));
+
+        $this->assertInstanceOf(Logger::class, $logger);
+        $this->assertEquals('logger3', $logger->getName());
     }
 
     /**
