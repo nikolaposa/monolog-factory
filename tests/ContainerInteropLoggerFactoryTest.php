@@ -72,12 +72,34 @@ class ContainerInteropLoggerFactoryTest extends TestCase
                             ProcessorFactoryAsset::class,
                         ],
                     ],
-                    'invalid_logger' => [
-                        'name' => 'invalid_logger',
+                    'invalid_handler_logger' => [
+                        'name' => 'invalid_handler_logger',
                         'handlers' => [
                             'NonExistingHandler',
                         ],
                     ],
+                    'invalid_formatter_logger' => [
+                        'name' => 'invalid_handler_logger',
+                        'handlers' => [
+                            [
+                                'name' => NullHandler::class,
+                                'options' => [
+                                    'formatter' => 'NonExistingFormatter',
+                                ],
+                            ],
+                        ],
+                    ],
+                    'invalid_processor_logger' => [
+                        'name' => 'invalid_processor_logger',
+                        'handlers' => [
+                            [
+                                'name' => NullHandler::class,
+                            ],
+                        ],
+                        'processors' => [
+                            'NonExistingProcessor',
+                        ],
+                    ]
                 ],
             ],
             'DefaultLoggerHandler' => new NullHandler(),
@@ -200,7 +222,7 @@ class ContainerInteropLoggerFactoryTest extends TestCase
      */
     public function it_raises_exception_if_handler_cannot_be_resolved_from_container()
     {
-        $factory = new ContainerInteropLoggerFactory('invalid_logger');
+        $factory = new ContainerInteropLoggerFactory('invalid_handler_logger');
 
         try {
             $factory($this->container);
@@ -209,6 +231,44 @@ class ContainerInteropLoggerFactoryTest extends TestCase
         } catch (InvalidContainerServiceException $ex) {
             $this->assertEquals(
                 'NonExistingHandler handler has not been found in the DI container',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_raises_exception_if_formatter_cannot_be_resolved_from_container()
+    {
+        $factory = new ContainerInteropLoggerFactory('invalid_formatter_logger');
+
+        try {
+            $factory($this->container);
+
+            $this->fail('Exception should have been raised');
+        } catch (InvalidContainerServiceException $ex) {
+            $this->assertEquals(
+                'NonExistingFormatter formatter has not been found in the DI container',
+                $ex->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_raises_exception_if_processor_cannot_be_resolved_from_container()
+    {
+        $factory = new ContainerInteropLoggerFactory('invalid_processor_logger');
+
+        try {
+            $factory($this->container);
+
+            $this->fail('Exception should have been raised');
+        } catch (InvalidContainerServiceException $ex) {
+            $this->assertEquals(
+                'NonExistingProcessor processor has not been found in the DI container',
                 $ex->getMessage()
             );
         }
