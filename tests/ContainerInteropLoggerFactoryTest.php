@@ -14,7 +14,7 @@ use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
 use MonologFactory\ContainerInteropLoggerFactory;
 use MonologFactory\Exception\InvalidArgumentException;
-use MonologFactory\Exception\InvalidContainerServiceException;
+use MonologFactory\Exception\LoggerComponentNotResolvedException;
 use MonologFactory\Tests\TestAsset\ContainerAsset;
 use MonologFactory\Tests\TestAsset\Logger\ProcessorFactoryAsset;
 use PHPUnit\Framework\TestCase;
@@ -228,11 +228,8 @@ class ContainerInteropLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidContainerServiceException $ex) {
-            $this->assertEquals(
-                'NonExistingHandler handler has not been found in the DI container',
-                $ex->getMessage()
-            );
+        } catch (LoggerComponentNotResolvedException $ex) {
+            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
         }
     }
 
@@ -247,11 +244,8 @@ class ContainerInteropLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidContainerServiceException $ex) {
-            $this->assertEquals(
-                'NonExistingFormatter formatter has not been found in the DI container',
-                $ex->getMessage()
-            );
+        } catch (LoggerComponentNotResolvedException $ex) {
+            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
         }
     }
 
@@ -266,11 +260,8 @@ class ContainerInteropLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidContainerServiceException $ex) {
-            $this->assertEquals(
-                'NonExistingProcessor processor has not been found in the DI container',
-                $ex->getMessage()
-            );
+        } catch (LoggerComponentNotResolvedException $ex) {
+            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
         }
     }
 

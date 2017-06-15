@@ -9,7 +9,8 @@ use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use MonologFactory\Exception\InvalidArgumentException;
-use MonologFactory\Exception\InvalidContainerServiceException;
+use MonologFactory\Exception\LoggerComponentNotResolvedException;
+use Throwable;
 
 class ContainerInteropLoggerFactory
 {
@@ -84,12 +85,16 @@ class ContainerInteropLoggerFactory
         $name = $config['name'];
         unset($config['name']);
 
-        if (is_array($config['handlers'])) {
-            $config['handlers'] = $this->prepareHandlers($config['handlers']);
-        }
+        try {
+            if (is_array($config['handlers'])) {
+                $config['handlers'] = $this->prepareHandlers($config['handlers']);
+            }
 
-        if (is_array($config['processors'])) {
-            $config['processors'] = $this->prepareProcessors($config['processors']);
+            if (is_array($config['processors'])) {
+                $config['processors'] = $this->prepareProcessors($config['processors']);
+            }
+        } catch (Throwable $ex) {
+            throw LoggerComponentNotResolvedException::fromError($ex);
         }
 
         return $this->getLoggerFactory()->createLogger($name, $config);
@@ -123,47 +128,17 @@ class ContainerInteropLoggerFactory
 
     protected function resolveHandler(string $handlerName) : HandlerInterface
     {
-        $handler = $this->resolveFromContainer($handlerName);
-
-        if (null === $handler) {
-            throw InvalidContainerServiceException::forUnresolved('handler', $handlerName);
-        }
-
-        if (! $handler instanceof HandlerInterface) {
-            throw InvalidContainerServiceException::forInvalid('handler', $handlerName, HandlerInterface::class);
-        }
-
-        return $handler;
+        return $this->resolveFromContainer($handlerName);
     }
 
     protected function resolveFormatter(string $formatterName) : FormatterInterface
     {
-        $formatter = $this->resolveFromContainer($formatterName);
-
-        if (null === $formatter) {
-            throw InvalidContainerServiceException::forUnresolved('formatter', $formatterName);
-        }
-
-        if (! $formatter instanceof FormatterInterface) {
-            throw InvalidContainerServiceException::forInvalid('formatter', $formatterName, FormatterInterface::class);
-        }
-
-        return $formatter;
+        return $this->resolveFromContainer($formatterName);
     }
 
     protected function resolveProcessor(string $processorName) : callable
     {
-        $processor = $this->resolveFromContainer($processorName);
-
-        if (null === $processor) {
-            throw InvalidContainerServiceException::forUnresolved('processor', $processorName);
-        }
-
-        if (! is_callable($processor)) {
-            throw InvalidContainerServiceException::forInvalid('processor', $processorName, 'callable');
-        }
-
-        return $processor;
+        return $this->resolveFromContainer($processorName);
     }
 
     final protected function resolveFromContainer(string $serviceOrFactory)
