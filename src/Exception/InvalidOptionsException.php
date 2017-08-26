@@ -24,16 +24,16 @@ class InvalidOptionsException extends InvalidArgumentException
         return new self(sprintf(
             "'handlers' item should be either %s instance or an factory input array; %s given",
             HandlerInterface::class,
-            gettype($handler))
-        );
+            gettype($handler)
+        ));
     }
 
     public static function forInvalidProcessor($processor)
     {
         return new self(sprintf(
             "'processors' item should be either callable or an factory input array; %s given",
-            gettype($processor))
-        );
+            gettype($processor)
+        ));
     }
 
     public static function forInvalidFormatter($formatter)
@@ -41,7 +41,7 @@ class InvalidOptionsException extends InvalidArgumentException
         return new self(sprintf(
             "Handler 'formatter' should be either %s instance or an factory input array; %s given",
             FormatterInterface::class,
-            gettype($formatter))
-        );
+            gettype($formatter)
+        ));
     }
 }
