@@ -61,7 +61,7 @@ use Monolog\Formatter\HtmlFormatter;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
-use MonologFactory\ContainerInteropLoggerFactory;
+use MonologFactory\DiContainerLoggerFactory;
 
 return [
     'logger' => [
@@ -90,9 +90,9 @@ return [
     ],
     'di' => [
         'factories' => [
-            'MyLogger1' => new ContainerInteropLoggerFactory('my_logger'),
+            'MyLogger1' => new DiContainerLoggerFactory('my_logger'),
             //... or more preferred/optimal way:
-            'MyLogger2' => [ContainerInteropLoggerFactory::class, 'my_logger'],
+            'MyLogger2' => [DiContainerLoggerFactory::class, 'my_logger'],
         ],
     ],
 ];
