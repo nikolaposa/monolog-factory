@@ -6,7 +6,7 @@ use Monolog\Handler\NullHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
-use MonologFactory\ContainerInteropLoggerFactory;
+use MonologFactory\DiContainerLoggerFactory;
 
 return [
     'logger' => [
@@ -53,8 +53,8 @@ return [
         ],
     ],
     'di' => [
-        'Logger1' => new ContainerInteropLoggerFactory('logger1'),
-        'Logger2' => [ContainerInteropLoggerFactory::class, 'logger2'], //static variance; recommended for having plain-array configurations
+        'Logger1' => new DiContainerLoggerFactory('logger1'),
+        'Logger2' => [DiContainerLoggerFactory::class, 'logger2'], //static variance; recommended for having plain-array configurations
         'DefaultLoggerHandler' => function () {
             return new NullHandler();
         },

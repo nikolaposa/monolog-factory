@@ -12,35 +12,37 @@ use MonologFactory\Exception\InvalidArgumentException;
 use MonologFactory\Exception\LoggerComponentNotResolvedException;
 use Throwable;
 
-class ContainerInteropLoggerFactory
+abstract class AbstractDiContainerLoggerFactory
 {
-    const CONFIG_KEY = 'logger';
-
     /**
      * @var string
      */
-    protected $name;
+    protected $loggerName;
 
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    private $container;
 
     /**
      * @var LoggerFactory
      */
     private $loggerFactory;
 
-    public function __construct(string $name = 'default')
+    public function __construct(string $loggerName = 'default')
     {
-        $this->name = $name;
+        $this->loggerName = $loggerName;
     }
 
     public function __invoke(ContainerInterface $container) : Logger
     {
         $this->container = $container;
 
-        $loggerConfig = $this->getLoggerConfig($this->name);
+        $loggerConfig = array_merge([
+            'name' => $this->loggerName,
+            'handlers' => [],
+            'processors' => [],
+        ], $this->getLoggerConfig($this->loggerName));
 
         return $this->createLogger($loggerConfig);
     }
@@ -49,8 +51,8 @@ class ContainerInteropLoggerFactory
     {
         if (0 === count($arguments) || ! ($container = current($arguments)) instanceof ContainerInterface) {
             throw new InvalidArgumentException(sprintf(
-                'The first argument for %s method must be of type %s',
-                __METHOD__,
+                'The first argument for %s must be of type %s',
+                static::class,
                 ContainerInterface::class
             ));
         }
@@ -58,27 +60,7 @@ class ContainerInteropLoggerFactory
         return (new static($name))->__invoke($container);
     }
 
-    protected function getLoggerConfig(string $loggerName) : array
-    {
-        $config = [];
-        foreach (['config', 'Config'] as $configServiceName) {
-            if ($this->container->has($configServiceName)) {
-                $config = $this->container->get($configServiceName);
-                break;
-            }
-        }
-        
-        $loggerConfig = $config[self::CONFIG_KEY][$loggerName] ?? [];
-
-        return array_merge(
-            [
-                'name' => $loggerName,
-                'handlers' => [],
-                'processors' => [],
-            ],
-            $loggerConfig
-        );
-    }
+    abstract protected function getLoggerConfig(string $loggerName) : array;
 
     protected function createLogger(array $config) : Logger
     {
@@ -100,7 +82,12 @@ class ContainerInteropLoggerFactory
         return $this->getLoggerFactory()->createLogger($name, $config);
     }
 
-    protected function prepareHandlers(array $handlers) : array
+    protected function getContainer() : ContainerInterface
+    {
+        return $this->container;
+    }
+
+    private function prepareHandlers(array $handlers) : array
     {
         return array_map(function ($handler) {
             if (is_string($handler)) {
@@ -115,7 +102,7 @@ class ContainerInteropLoggerFactory
         }, $handlers);
     }
 
-    protected function prepareProcessors(array $processors) : array
+    private function prepareProcessors(array $processors) : array
     {
         return array_map(function ($processor) {
             if (is_string($processor)) {
@@ -126,22 +113,22 @@ class ContainerInteropLoggerFactory
         }, $processors);
     }
 
-    protected function resolveHandler(string $handlerName) : HandlerInterface
+    private function resolveHandler(string $handlerName) : HandlerInterface
     {
         return $this->resolveFromContainer($handlerName);
     }
 
-    protected function resolveFormatter(string $formatterName) : FormatterInterface
+    private function resolveFormatter(string $formatterName) : FormatterInterface
     {
         return $this->resolveFromContainer($formatterName);
     }
 
-    protected function resolveProcessor(string $processorName) : callable
+    private function resolveProcessor(string $processorName) : callable
     {
         return $this->resolveFromContainer($processorName);
     }
 
-    final protected function resolveFromContainer(string $serviceOrFactory)
+    private function resolveFromContainer(string $serviceOrFactory)
     {
         if ($this->container->has($serviceOrFactory)) {
             return $this->container->get($serviceOrFactory);
@@ -155,7 +142,7 @@ class ContainerInteropLoggerFactory
         return null;
     }
 
-    final protected function getLoggerFactory() : LoggerFactory
+    private function getLoggerFactory() : LoggerFactory
     {
         if (null === $this->loggerFactory) {
             $this->loggerFactory = new LoggerFactory();
