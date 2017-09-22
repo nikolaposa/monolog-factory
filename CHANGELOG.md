@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 -  `AbstractDiContainerLoggerFactory` to allow for having a custom logger config resolution strategy.
+-  Possibility for defining per-handler processors.
 
 ### Changed
 - Rename `ContainerInteropLoggerFactory` to `DiContainerLoggerFactory`.

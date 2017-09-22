@@ -48,6 +48,10 @@ class LoggerFactory
             $handler->setFormatter($formatter);
         }
 
+        foreach (array_reverse($options->getProcessors()) as $processor) {
+            $handler->pushProcessor($this->createProcessorFromOptions($processor));
+        }
+
         return $handler;
     }
 
@@ -98,6 +102,12 @@ class LoggerFactory
         return $this->createProcessor($factoryInput->getName(), $factoryInput->getOptions());
     }
 
+    /**
+     * @param string $className
+     * @param array $creationOptions
+     *
+     * @return mixed
+     */
     protected function createObject(string $className, array $creationOptions)
     {
         return $this->getCascader()->create($className, $creationOptions);

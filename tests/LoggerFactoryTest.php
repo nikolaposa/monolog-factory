@@ -258,6 +258,30 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
+    public function it_creates_handler_with_processors_in_options()
+    {
+        $handler = $this->factory->createHandler(NativeMailerHandler::class, [
+            'to' => 'test@example.com',
+            'subject' => 'Test',
+            'from' => 'noreply@example.com',
+            'processors' => [
+                [
+                    'name' => MemoryUsageProcessor::class,
+                ],
+                [
+                    'name' => PsrLogMessageProcessor::class,
+                ],
+            ],
+        ]);
+
+        $this->assertInstanceOf(NativeMailerHandler::class, $handler);
+        $this->assertInstanceOf(MemoryUsageProcessor::class, $handler->popProcessor());
+        $this->assertInstanceOf(PsrLogMessageProcessor::class, $handler->popProcessor());
+    }
+
+    /**
+     * @test
+     */
     public function it_creates_formatter_with_no_options()
     {
         $formatter = $this->factory->createFormatter(LineFormatter::class);
