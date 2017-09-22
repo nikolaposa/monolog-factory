@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2.0.0 - [Unreleased]
+## 2.0.0 - 2017-09-22
 
 ### Added
 -  `AbstractDiContainerLoggerFactory` to allow for having a custom logger config resolution strategy.
@@ -23,4 +23,4 @@ All notable changes to this project will be documented in this file.
 ## 0.1.0 - 2017-06-11
 
 
-[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/2.0.0...HEAD
