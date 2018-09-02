@@ -58,6 +58,7 @@ $logger = $loggerFactory->createLogger('my_logger', [
 
 ```php
 use Monolog\Formatter\HtmlFormatter;
+use Monolog\Handler\BufferHandler;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
@@ -65,8 +66,8 @@ use MonologFactory\DiContainerLoggerFactory;
 
 return [
     'logger' => [
-        'my_logger' => [
-            'name' => 'my_logger',
+        'logger1' => [
+            'name' => 'logger1',
             'handlers' => [
                 [
                     'name' => NativeMailerHandler::class,
@@ -87,12 +88,34 @@ return [
                 ],
             ],
         ],
+        'logger2' => [
+            'name' => 'logger2',
+            'handlers' => [
+                [
+                    'name' => BufferHandler::class,
+                    'options' => [
+                        'handler' => [
+                            '__class__' => NativeMailerHandler::class,
+                            'to' => 'test@example.com',
+                            'subject' => 'Test',
+                            'from' => 'noreply@example.com',
+                        ],
+                        'buffer_limit' => 5,
+                    ],
+                ],
+            ],
+            'processors' => [
+                [
+                    'name' => PsrLogMessageProcessor::class,
+                ],
+            ],
+        ],
     ],
     'di' => [
         'factories' => [
-            'MyLogger1' => new DiContainerLoggerFactory('my_logger'),
+            'Logger1' => new DiContainerLoggerFactory('logger1'),
             //... or more preferred/optimal way:
-            'MyLogger2' => [DiContainerLoggerFactory::class, 'my_logger'],
+            'Logger2' => [DiContainerLoggerFactory::class, 'logger2'],
         ],
     ],
 ];
