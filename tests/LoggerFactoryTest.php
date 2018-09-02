@@ -7,6 +7,7 @@ namespace MonologFactory\Tests;
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\ScalarFormatter;
+use Monolog\Handler\BufferHandler;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\RavenHandler;
@@ -235,6 +236,26 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(RavenHandler::class, $handler);
         $this->assertAttributeInstanceOf(\Raven_Client::class, 'ravenClient', $handler);
         $this->assertEquals(Logger::ERROR, $handler->getLevel());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_handler_with_interface_dependency_by_passing_concrete_class_name_through_options()
+    {
+        /* @var $handler BufferHandler */
+        $handler = $this->factory->createHandler(BufferHandler::class, [
+            'handler' => [
+                '__class__' => NativeMailerHandler::class,
+                'to' => 'test@example.com',
+                'subject' => 'Test',
+                'from' => 'noreply@example.com',
+            ],
+            'buffer_limit' => 5
+        ]);
+
+        $this->assertInstanceOf(BufferHandler::class, $handler);
+        $this->assertAttributeInstanceOf(NativeMailerHandler::class, 'handler', $handler);
     }
 
     /**
