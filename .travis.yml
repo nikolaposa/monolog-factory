@@ -13,6 +13,7 @@ matrix:
         - EXECUTE_CS_CHECK=true
         - EXECUTE_TEST_COVERALLS=true
     - php: 7.1
+    - php: 7.2
   
 install:
   - travis_retry composer install --no-interaction
