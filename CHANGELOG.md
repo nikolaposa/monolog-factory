@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.0.2 - 2018-10-08
+### Fixed
+- [4: Cannot define configuration for GroupHandler](https://github.com/nikolaposa/monolog-factory/issues/4)
+
 ## 2.0.1 - 2018-09-22
 ### Fixed
 - [3: Cannot define logger configuration for handlers that depend on interfaces or abstract classes in their constructors](https://github.com/nikolaposa/monolog-factory/issues/3)
@@ -25,4 +29,4 @@ All notable changes to this project will be documented in this file.
 ## 0.1.0 - 2017-06-11
 
 
-[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/2.0.1...HEAD
+[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/2.0.2...HEAD
