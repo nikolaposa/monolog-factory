@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace MonologFactory\Tests;
 
+use Closure;
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\ScalarFormatter;
 use Monolog\Handler\BufferHandler;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
-use Monolog\Handler\RavenHandler;
+use Monolog\Handler\RollbarHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
@@ -19,6 +20,7 @@ use MonologFactory\Exception\InvalidFactoryInputException;
 use MonologFactory\Exception\InvalidOptionsException;
 use MonologFactory\LoggerFactory;
 use PHPUnit\Framework\TestCase;
+use Rollbar\RollbarLogger;
 
 class LoggerFactoryTest extends TestCase
 {
@@ -30,6 +32,19 @@ class LoggerFactoryTest extends TestCase
         $this->factory = new LoggerFactory();
     }
 
+    final protected static function readPrivateProperty(object $object, string $property)
+    {
+        $reader = function ($object, $property) {
+            $value = Closure::bind(function & () use ($property) {
+                return $this->$property;
+            }, $object, $object)->__invoke();
+
+            return $value;
+        };
+
+        return $reader($object, $property);
+    }
+
     /**
      * @test
      */
@@ -37,8 +52,7 @@ class LoggerFactoryTest extends TestCase
     {
         $logger = $this->factory->createLogger('test', []);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('test', $logger->getName());
+        $this->assertSame('test', $logger->getName());
     }
 
     /**
@@ -55,7 +69,6 @@ class LoggerFactoryTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(Logger::class, $logger);
         $this->assertCount(1, $logger->getHandlers());
         $this->assertCount(1, $logger->getProcessors());
         $this->assertInstanceOf(NullHandler::class, current($logger->getHandlers()));
@@ -75,9 +88,8 @@ class LoggerFactoryTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(Logger::class, $logger);
         $this->assertCount(1, $logger->getProcessors());
-        $this->assertInternalType('callable', current($logger->getProcessors()));
+        $this->assertIsCallable(current($logger->getProcessors()));
     }
 
     /**
@@ -102,13 +114,12 @@ class LoggerFactoryTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(Logger::class, $logger);
         $this->assertCount(1, $logger->getHandlers());
         $this->assertCount(1, $logger->getProcessors());
 
         $handler = current($logger->getHandlers());
         $this->assertInstanceOf(NullHandler::class, $handler);
-        $this->assertEquals(Logger::INFO, $handler->getLevel());
+        $this->assertSame(Logger::INFO, $handler->getLevel());
         $this->assertInstanceOf(ScalarFormatter::class, $handler->getFormatter());
 
         $processor = current($logger->getProcessors());
@@ -136,7 +147,6 @@ class LoggerFactoryTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(Logger::class, $logger);
         $handlers = $logger->getHandlers();
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(TestHandler::class, $handlers[0]);
@@ -164,7 +174,6 @@ class LoggerFactoryTest extends TestCase
             ],
         ]);
 
-        $this->assertInstanceOf(Logger::class, $logger);
         $processors = $logger->getProcessors();
         $this->assertCount(2, $processors);
         $this->assertInstanceOf(MemoryUsageProcessor::class, $processors[0]);
@@ -193,9 +202,9 @@ class LoggerFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(NativeMailerHandler::class, $handler);
-        $this->assertAttributeContains('test@example.com', 'to', $handler);
-        $this->assertAttributeEquals('Test', 'subject', $handler);
-        $this->assertAttributeContains('From: noreply@example.com', 'headers', $handler);
+        $this->assertContains('test@example.com', self::readPrivateProperty($handler, 'to'));
+        $this->assertSame('Test', self::readPrivateProperty($handler, 'subject'));
+        $this->assertContains('From: noreply@example.com', self::readPrivateProperty($handler, 'headers'));
     }
 
     /**
@@ -212,10 +221,10 @@ class LoggerFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(NativeMailerHandler::class, $handler);
-        $this->assertAttributeContains('test@example.com', 'to', $handler);
-        $this->assertAttributeEquals('Test', 'subject', $handler);
-        $this->assertAttributeContains('From: noreply@example.com', 'headers', $handler);
-        $this->assertEquals(Logger::ALERT, $handler->getLevel());
+        $this->assertContains('test@example.com', self::readPrivateProperty($handler, 'to'));
+        $this->assertSame('Test', self::readPrivateProperty($handler, 'subject'));
+        $this->assertContains('From: noreply@example.com', self::readPrivateProperty($handler, 'headers'));
+        $this->assertSame(Logger::ALERT, $handler->getLevel());
     }
 
     /**
@@ -223,17 +232,15 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_handler_with_nested_objects(): void
     {
-        /* @var $handler RavenHandler */
-        $handler = $this->factory->createHandler(RavenHandler::class, [
-            'raven_client' => [
-                'options_or_dsn' => 'https://key:secret@sentry.io/test',
+        $handler = $this->factory->createHandler(RollbarHandler::class, [
+            'rollbar_logger' => [
+                'enabled' => false,
             ],
             'level' => Logger::ERROR,
         ]);
 
-        $this->assertInstanceOf(RavenHandler::class, $handler);
-        $this->assertAttributeInstanceOf(\Raven_Client::class, 'ravenClient', $handler);
-        $this->assertEquals(Logger::ERROR, $handler->getLevel());
+        $this->assertInstanceOf(RollbarHandler::class, $handler);
+        $this->assertInstanceOf(RollbarLogger::class, self::readPrivateProperty($handler, 'rollbarLogger'));
     }
 
     /**
@@ -253,7 +260,7 @@ class LoggerFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(BufferHandler::class, $handler);
-        $this->assertAttributeInstanceOf(NativeMailerHandler::class, 'handler', $handler);
+        $this->assertInstanceOf(NativeMailerHandler::class, self::readPrivateProperty($handler, 'handler'));
     }
 
     /**
@@ -319,8 +326,8 @@ class LoggerFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(LineFormatter::class, $formatter);
-        $this->assertAttributeEquals("%datetime% - %channel%.%level_name%: %message% | %context% | %extra%\n", 'format', $formatter);
-        $this->assertAttributeEquals('c', 'dateFormat', $formatter);
+        $this->assertSame("%datetime% - %channel%.%level_name%: %message% | %context% | %extra%\n", self::readPrivateProperty($formatter, 'format'));
+        $this->assertSame('c', self::readPrivateProperty($formatter, 'dateFormat'));
     }
 
     /**
@@ -334,8 +341,8 @@ class LoggerFactoryTest extends TestCase
         ]);
 
         $this->assertInstanceOf(LineFormatter::class, $formatter);
-        $this->assertAttributeEquals("%datetime% - %channel%.%level_name%: %message% | %context% | %extra%\n", 'format', $formatter);
-        $this->assertAttributeEquals('c', 'dateFormat', $formatter);
+        $this->assertSame("%datetime% - %channel%.%level_name%: %message% | %context% | %extra%\n", self::readPrivateProperty($formatter, 'format'));
+        $this->assertSame('c', self::readPrivateProperty($formatter, 'dateFormat'));
     }
 
     /**
@@ -353,14 +360,15 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_processor_with_options(): void
     {
+        /** @var MemoryUsageProcessor $processor */
         $processor = $this->factory->createProcessor(MemoryUsageProcessor::class, [
             'real_usage' => true,
             'use_formatting' => false,
         ]);
 
         $this->assertInstanceOf(MemoryUsageProcessor::class, $processor);
-        $this->assertAttributeEquals(true, 'realUsage', $processor);
-        $this->assertAttributeEquals(false, 'useFormatting', $processor);
+        $this->assertTrue(self::readPrivateProperty($processor, 'realUsage'));
+        $this->assertFalse(self::readPrivateProperty($processor, 'useFormatting'));
     }
 
     /**
@@ -368,14 +376,15 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_processor_with_randomly_ordered_options(): void
     {
+        /** @var MemoryUsageProcessor $processor */
         $processor = $this->factory->createProcessor(MemoryUsageProcessor::class, [
             'use_formatting' => false,
             'real_usage' => true,
         ]);
 
         $this->assertInstanceOf(MemoryUsageProcessor::class, $processor);
-        $this->assertAttributeEquals(true, 'realUsage', $processor);
-        $this->assertAttributeEquals(false, 'useFormatting', $processor);
+        $this->assertTrue(self::readPrivateProperty($processor, 'realUsage'));
+        $this->assertFalse(self::readPrivateProperty($processor, 'useFormatting'));
     }
 
     /**
@@ -390,7 +399,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidOptionsException $ex) {
-            $this->assertEquals("'handlers' should be an array; string given", $ex->getMessage());
+            $this->assertSame("'handlers' should be an array; string given", $ex->getMessage());
         }
     }
 
@@ -406,7 +415,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidOptionsException $ex) {
-            $this->assertEquals("'processors' should be an array; string given", $ex->getMessage());
+            $this->assertSame("'processors' should be an array; string given", $ex->getMessage());
         }
     }
 
@@ -424,7 +433,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidOptionsException $ex) {
-            $this->assertEquals(
+            $this->assertSame(
                 "'handlers' item should be either Monolog\\Handler\\HandlerInterface instance or an factory input array; string given",
                 $ex->getMessage()
             );
@@ -445,7 +454,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidOptionsException $ex) {
-            $this->assertEquals(
+            $this->assertSame(
                 "'processors' item should be either callable or an factory input array; string given",
                 $ex->getMessage()
             );
@@ -472,7 +481,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidOptionsException $ex) {
-            $this->assertEquals(
+            $this->assertSame(
                 "Handler 'formatter' should be either Monolog\\Formatter\\FormatterInterface instance or an factory input array; string given",
                 $ex->getMessage()
             );
@@ -495,7 +504,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidFactoryInputException $ex) {
-            $this->assertEquals("'name' is missing from the factory input", $ex->getMessage());
+            $this->assertSame("'name' is missing from the factory input", $ex->getMessage());
         }
     }
 
@@ -516,7 +525,7 @@ class LoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (InvalidFactoryInputException $ex) {
-            $this->assertEquals("Factory input 'options' should be an array; string given", $ex->getMessage());
+            $this->assertSame("Factory input 'options' should be an array; string given", $ex->getMessage());
         }
     }
 }

@@ -26,7 +26,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.0",
         "phpunit/phpunit": "^8.0",
-        "sentry/sentry": "^1.7"
+        "rollbar/rollbar": "^2.0"
     },
     "autoload": {
         "psr-4": {

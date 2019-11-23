@@ -113,11 +113,9 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger1');
 
-        /* @var $logger Logger */
         $logger = $factory($this->container);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('logger1', $logger->getName());
+        $this->assertSame('logger1', $logger->getName());
         $this->assertCount(1, $logger->getHandlers());
         $this->assertCount(1, $logger->getProcessors());
     }
@@ -129,7 +127,6 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger3');
 
-        /* @var $logger Logger */
         $logger = $factory(new ContainerAsset([
             'config' => [
                 'logger' => [
@@ -145,8 +142,7 @@ class DiContainerLoggerFactoryTest extends TestCase
             ],
         ]));
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('logger3', $logger->getName());
+        $this->assertSame('logger3', $logger->getName());
     }
 
     /**
@@ -156,11 +152,9 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory();
 
-        /* @var $logger Logger */
         $logger = $factory($this->container);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('default', $logger->getName());
+        $this->assertSame('default', $logger->getName());
         $this->assertCount(0, $logger->getHandlers());
         $this->assertCount(0, $logger->getProcessors());
     }
@@ -172,8 +166,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = [DiContainerLoggerFactory::class, 'logger1'];
 
-        /* @var $logger Logger */
-        $logger = call_user_func($factory, $this->container);
+        $logger = $factory($this->container);
 
         $this->assertInstanceOf(Logger::class, $logger);
     }
@@ -186,11 +179,11 @@ class DiContainerLoggerFactoryTest extends TestCase
         $factory = [DiContainerLoggerFactory::class, 'logger1'];
 
         try {
-            call_user_func($factory, 'invalid');
+            $factory('invalid');
 
             $this->fail('Exception should have been raised');
         } catch (InvalidArgumentException $ex) {
-            $this->assertEquals(
+            $this->assertSame(
                 'The first argument for ' . DiContainerLoggerFactory::class . ' must be of type ' . ContainerInterface::class,
                 $ex->getMessage()
             );
@@ -204,11 +197,9 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
-        /* @var $logger Logger */
         $logger = $factory($this->container);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('logger2', $logger->getName());
+        $this->assertSame('logger2', $logger->getName());
         $handlers = $logger->getHandlers();
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(NullHandler::class, $handlers[0]);
@@ -270,11 +261,9 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
-        /* @var $logger Logger */
         $logger = $factory($this->container);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('logger2', $logger->getName());
+        $this->assertSame('logger2', $logger->getName());
         $handlers = $logger->getHandlers();
         $this->assertCount(2, $handlers);
         $this->assertInstanceOf(NativeMailerHandler::class, $handlers[1]);
@@ -288,11 +277,9 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
-        /* @var $logger Logger */
         $logger = $factory($this->container);
 
-        $this->assertInstanceOf(Logger::class, $logger);
-        $this->assertEquals('logger2', $logger->getName());
+        $this->assertSame('logger2', $logger->getName());
         $processors = $logger->getProcessors();
         $this->assertCount(1, $logger->getProcessors());
         $this->assertInstanceOf(MemoryUsageProcessor::class, $processors[0]);
