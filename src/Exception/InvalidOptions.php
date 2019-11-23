@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace MonologFactory\Exception;
 
+use InvalidArgumentException;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 
-class InvalidOptionsException extends InvalidArgumentException
+final class InvalidOptions extends InvalidArgumentException implements MonologFactoryException
 {
-    public static function forInvalidHandlers($handlers)
+    public static function invalidHandlers($handlers): self
     {
         return new self(sprintf("'handlers' should be an array; %s given", gettype($handlers)));
     }
 
-    public static function forInvalidProcessors($processors)
-    {
-        return new self(sprintf("'processors' should be an array; %s given", gettype($processors)));
-    }
-
-    public static function forInvalidHandler($handler)
+    public static function invalidHandler($handler): self
     {
         return new self(sprintf(
             "'handlers' item should be either %s instance or an factory input array; %s given",
@@ -28,7 +24,12 @@ class InvalidOptionsException extends InvalidArgumentException
         ));
     }
 
-    public static function forInvalidProcessor($processor)
+    public static function invalidProcessors($processors): self
+    {
+        return new self(sprintf("'processors' should be an array; %s given", gettype($processors)));
+    }
+
+    public static function invalidProcessor($processor): self
     {
         return new self(sprintf(
             "'processors' item should be either callable or an factory input array; %s given",
@@ -36,7 +37,7 @@ class InvalidOptionsException extends InvalidArgumentException
         ));
     }
 
-    public static function forInvalidFormatter($formatter)
+    public static function invalidFormatter($formatter): self
     {
         return new self(sprintf(
             "Handler 'formatter' should be either %s instance or an factory input array; %s given",

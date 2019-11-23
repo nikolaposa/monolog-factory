@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace MonologFactory\Options;
 
 use Monolog\Handler\HandlerInterface;
-use MonologFactory\Exception\InvalidOptionsException;
+use MonologFactory\Exception\InvalidOptions;
 
 final class LoggerOptions extends AbstractOptions
 {
@@ -25,12 +25,12 @@ final class LoggerOptions extends AbstractOptions
             $handlers = $options['handlers'];
 
             if (! is_array($handlers)) {
-                throw InvalidOptionsException::forInvalidHandlers($handlers);
+                throw InvalidOptions::invalidHandlers($handlers);
             }
 
             foreach ($handlers as $handler) {
                 if (! ($handler instanceof HandlerInterface || is_array($handler))) {
-                    throw InvalidOptionsException::forInvalidHandler($handler);
+                    throw InvalidOptions::invalidHandler($handler);
                 }
             }
         }
@@ -39,12 +39,12 @@ final class LoggerOptions extends AbstractOptions
             $processors = $options['processors'];
 
             if (! is_array($processors)) {
-                throw InvalidOptionsException::forInvalidProcessors($options['processors']);
+                throw InvalidOptions::invalidProcessors($options['processors']);
             }
 
             foreach ($processors as $processor) {
                 if (! (is_callable($processor) || is_array($processor))) {
-                    throw InvalidOptionsException::forInvalidProcessor($processor);
+                    throw InvalidOptions::invalidProcessor($processor);
                 }
             }
         }

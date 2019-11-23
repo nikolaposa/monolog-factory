@@ -7,8 +7,8 @@ namespace MonologFactory;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
-use MonologFactory\Exception\InvalidArgumentException;
-use MonologFactory\Exception\LoggerComponentNotResolvedException;
+use MonologFactory\Exception\BadStaticDiContainerFactoryUsage;
+use MonologFactory\Exception\CannotResolveLoggerComponent;
 use Psr\Container\ContainerInterface;
 use Throwable;
 
@@ -44,11 +44,7 @@ abstract class AbstractDiContainerLoggerFactory
     public static function __callStatic(string $name, array $arguments): Logger
     {
         if (0 === count($arguments) || ! ($container = current($arguments)) instanceof ContainerInterface) {
-            throw new InvalidArgumentException(sprintf(
-                'The first argument for %s must be of type %s',
-                static::class,
-                ContainerInterface::class
-            ));
+            throw BadStaticDiContainerFactoryUsage::missingContainerArgument(static::class);
         }
 
         return (new static($name))->__invoke($container);
@@ -61,16 +57,12 @@ abstract class AbstractDiContainerLoggerFactory
         $name = $config['name'];
         unset($config['name']);
 
-        try {
-            if (is_array($config['handlers'])) {
-                $config['handlers'] = $this->prepareHandlers($config['handlers']);
-            }
+        if (is_array($config['handlers'])) {
+            $config['handlers'] = $this->prepareHandlers($config['handlers']);
+        }
 
-            if (is_array($config['processors'])) {
-                $config['processors'] = $this->prepareProcessors($config['processors']);
-            }
-        } catch (Throwable $ex) {
-            throw LoggerComponentNotResolvedException::fromError($ex);
+        if (is_array($config['processors'])) {
+            $config['processors'] = $this->prepareProcessors($config['processors']);
         }
 
         return $this->getLoggerFactory()->createLogger($name, $config);
@@ -85,10 +77,8 @@ abstract class AbstractDiContainerLoggerFactory
     {
         return array_map(function ($handler) {
             if (is_string($handler)) {
-                return $this->resolveHandler($handler);
-            }
-
-            if (is_array($handler) && isset($handler['options']['formatter']) && is_string($handler['options']['formatter'])) {
+                $handler = $this->resolveHandler($handler);
+            } elseif (is_array($handler) && isset($handler['options']['formatter']) && is_string($handler['options']['formatter'])) {
                 $handler['options']['formatter'] = $this->resolveFormatter($handler['options']['formatter']);
             }
 
@@ -100,7 +90,7 @@ abstract class AbstractDiContainerLoggerFactory
     {
         return array_map(function ($processor) {
             if (is_string($processor)) {
-                return $this->resolveProcessor($processor);
+                $processor = $this->resolveProcessor($processor);
             }
 
             return $processor;
@@ -124,16 +114,20 @@ abstract class AbstractDiContainerLoggerFactory
 
     private function resolveFromContainer(string $serviceOrFactory)
     {
-        if ($this->container->has($serviceOrFactory)) {
-            return $this->container->get($serviceOrFactory);
+        try {
+            if ($this->container->has($serviceOrFactory)) {
+                return $this->container->get($serviceOrFactory);
+            }
+
+            if (class_exists($serviceOrFactory)) {
+                $factory = new $serviceOrFactory();
+                return $factory($this->container);
+            }
+        } catch (Throwable $ex) {
+            throw CannotResolveLoggerComponent::resolutionFailed($serviceOrFactory, $ex);
         }
 
-        if (class_exists($serviceOrFactory)) {
-            $factory = new $serviceOrFactory();
-            return $factory($this->container);
-        }
-
-        return null;
+        throw CannotResolveLoggerComponent::unknownService($serviceOrFactory);
     }
 
     private function getLoggerFactory(): LoggerFactory

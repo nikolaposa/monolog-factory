@@ -16,8 +16,8 @@ use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
-use MonologFactory\Exception\InvalidFactoryInputException;
-use MonologFactory\Exception\InvalidOptionsException;
+use MonologFactory\Exception\InvalidFactoryInput;
+use MonologFactory\Exception\InvalidOptions;
 use MonologFactory\LoggerFactory;
 use PHPUnit\Framework\TestCase;
 use Rollbar\RollbarLogger;
@@ -403,7 +403,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidOptionsException $ex) {
+        } catch (InvalidOptions $ex) {
             $this->assertSame("'handlers' should be an array; string given", $ex->getMessage());
         }
     }
@@ -419,7 +419,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidOptionsException $ex) {
+        } catch (InvalidOptions $ex) {
             $this->assertSame("'processors' should be an array; string given", $ex->getMessage());
         }
     }
@@ -437,7 +437,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidOptionsException $ex) {
+        } catch (InvalidOptions $ex) {
             $this->assertSame(
                 "'handlers' item should be either Monolog\\Handler\\HandlerInterface instance or an factory input array; string given",
                 $ex->getMessage()
@@ -458,7 +458,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidOptionsException $ex) {
+        } catch (InvalidOptions $ex) {
             $this->assertSame(
                 "'processors' item should be either callable or an factory input array; string given",
                 $ex->getMessage()
@@ -485,7 +485,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidOptionsException $ex) {
+        } catch (InvalidOptions $ex) {
             $this->assertSame(
                 "Handler 'formatter' should be either Monolog\\Formatter\\FormatterInterface instance or an factory input array; string given",
                 $ex->getMessage()
@@ -508,7 +508,7 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidFactoryInputException $ex) {
+        } catch (InvalidFactoryInput $ex) {
             $this->assertSame("'name' is missing from the factory input", $ex->getMessage());
         }
     }
@@ -529,8 +529,8 @@ class LoggerFactoryTest extends TestCase
             ]);
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidFactoryInputException $ex) {
-            $this->assertSame("Factory input 'options' should be an array; string given", $ex->getMessage());
+        } catch (InvalidFactoryInput $ex) {
+            $this->assertSame("'options' should be an array; string given", $ex->getMessage());
         }
     }
 }

@@ -6,7 +6,7 @@ namespace MonologFactory;
 
 final class DiContainerLoggerFactory extends AbstractDiContainerLoggerFactory
 {
-    const CONFIG_KEY = 'logger';
+    public const CONFIG_KEY = 'logger';
 
     protected function getLoggerConfig(string $loggerName): array
     {

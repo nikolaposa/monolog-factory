@@ -12,8 +12,8 @@ use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
 use Monolog\Processor\PsrLogMessageProcessor;
 use MonologFactory\DiContainerLoggerFactory;
-use MonologFactory\Exception\InvalidArgumentException;
-use MonologFactory\Exception\LoggerComponentNotResolvedException;
+use MonologFactory\Exception\BadStaticDiContainerFactoryUsage;
+use MonologFactory\Exception\CannotResolveLoggerComponent;
 use MonologFactory\Tests\TestAsset\ContainerAsset;
 use MonologFactory\Tests\TestAsset\Logger\ProcessorFactoryAsset;
 use PHPUnit\Framework\TestCase;
@@ -182,9 +182,9 @@ class DiContainerLoggerFactoryTest extends TestCase
             $factory('invalid');
 
             $this->fail('Exception should have been raised');
-        } catch (InvalidArgumentException $ex) {
+        } catch (BadStaticDiContainerFactoryUsage $ex) {
             $this->assertSame(
-                'The first argument for ' . DiContainerLoggerFactory::class . ' must be of type ' . ContainerInterface::class,
+                'The first argument for ' . DiContainerLoggerFactory::class . ' must be ' . ContainerInterface::class . ' implementation',
                 $ex->getMessage()
             );
         }
@@ -217,8 +217,8 @@ class DiContainerLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
+        } catch (CannotResolveLoggerComponent $ex) {
+            $this->assertStringContainsString("Cannot resolve 'NonExistingHandler'", $ex->getMessage());
         }
     }
 
@@ -233,8 +233,8 @@ class DiContainerLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
+        } catch (CannotResolveLoggerComponent $ex) {
+            $this->assertStringContainsString("Cannot resolve 'NonExistingFormatter'", $ex->getMessage());
         }
     }
 
@@ -249,8 +249,8 @@ class DiContainerLoggerFactoryTest extends TestCase
             $factory($this->container);
 
             $this->fail('Exception should have been raised');
-        } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
+        } catch (CannotResolveLoggerComponent $ex) {
+            $this->assertStringContainsString("Cannot resolve 'NonExistingProcessor'", $ex->getMessage());
         }
     }
 

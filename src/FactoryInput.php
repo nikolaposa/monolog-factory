@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MonologFactory;
 
-use MonologFactory\Exception\InvalidFactoryInputException;
+use MonologFactory\Exception\InvalidFactoryInput;
 
 final class FactoryInput
 {
@@ -23,14 +23,14 @@ final class FactoryInput
     public static function fromArray(array $input)
     {
         if (! array_key_exists('name', $input)) {
-            throw InvalidFactoryInputException::forMissingName();
+            throw InvalidFactoryInput::missingName();
         }
         
         $name = $input['name'];
         $options = $input['options'] ?? [];
         
         if (! is_array($options)) {
-            throw InvalidFactoryInputException::forInvalidOptions($options);
+            throw InvalidFactoryInput::invalidOptions($options);
         }
         
         return new self($name, $options);
