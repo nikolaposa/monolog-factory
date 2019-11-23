@@ -25,7 +25,7 @@ class LoggerFactoryTest extends TestCase
     /** @var LoggerFactory */
     protected $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = new LoggerFactory();
     }
@@ -33,7 +33,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_with_no_options()
+    public function it_creates_logger_with_no_options(): void
     {
         $logger = $this->factory->createLogger('test', []);
 
@@ -44,7 +44,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_with_handlers_and_processors_options_as_instances()
+    public function it_creates_logger_with_handlers_and_processors_options_as_instances(): void
     {
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
@@ -65,7 +65,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_with_processor_as_callable()
+    public function it_creates_logger_with_processor_as_callable(): void
     {
         $logger = $this->factory->createLogger('test', [
             'processors' => [
@@ -83,7 +83,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_with_handlers_and_processors_options_as_factory_inputs()
+    public function it_creates_logger_with_handlers_and_processors_options_as_factory_inputs(): void
     {
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
@@ -118,7 +118,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_properly_orders_handlers_when_creating_logger()
+    public function it_properly_orders_handlers_when_creating_logger(): void
     {
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
@@ -146,7 +146,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_properly_orders_processors_when_creating_logger()
+    public function it_properly_orders_processors_when_creating_logger(): void
     {
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
@@ -174,7 +174,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_no_options()
+    public function it_creates_handler_with_no_options(): void
     {
         $handler = $this->factory->createHandler(NullHandler::class);
 
@@ -184,7 +184,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_options()
+    public function it_creates_handler_with_options(): void
     {
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
             'to' => 'test@example.com',
@@ -201,7 +201,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_randomly_ordered_options()
+    public function it_creates_handler_with_randomly_ordered_options(): void
     {
         /* @var $handler NativeMailerHandler */
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
@@ -221,7 +221,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_nested_objects()
+    public function it_creates_handler_with_nested_objects(): void
     {
         /* @var $handler RavenHandler */
         $handler = $this->factory->createHandler(RavenHandler::class, [
@@ -239,7 +239,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_interface_dependency_by_passing_concrete_class_name_through_options()
+    public function it_creates_handler_with_interface_dependency_by_passing_concrete_class_name_through_options(): void
     {
         /* @var $handler BufferHandler */
         $handler = $this->factory->createHandler(BufferHandler::class, [
@@ -259,7 +259,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_formatter_in_options()
+    public function it_creates_handler_with_formatter_in_options(): void
     {
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
             'to' => 'test@example.com',
@@ -277,7 +277,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_handler_with_processors_in_options()
+    public function it_creates_handler_with_processors_in_options(): void
     {
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
             'to' => 'test@example.com',
@@ -301,7 +301,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_formatter_with_no_options()
+    public function it_creates_formatter_with_no_options(): void
     {
         $formatter = $this->factory->createFormatter(LineFormatter::class);
 
@@ -311,7 +311,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_formatter_with_options()
+    public function it_creates_formatter_with_options(): void
     {
         $formatter = $this->factory->createFormatter(LineFormatter::class, [
             'format' => "%datetime% - %channel%.%level_name%: %message% | %context% | %extra%\n",
@@ -326,7 +326,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_formatter_with_randomly_ordered_options()
+    public function it_creates_formatter_with_randomly_ordered_options(): void
     {
         $formatter = $this->factory->createFormatter(LineFormatter::class, [
             'date_format' => 'c',
@@ -341,7 +341,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_processor_with_no_options()
+    public function it_creates_processor_with_no_options(): void
     {
         $processor = $this->factory->createProcessor(PsrLogMessageProcessor::class);
 
@@ -351,7 +351,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_processor_with_options()
+    public function it_creates_processor_with_options(): void
     {
         $processor = $this->factory->createProcessor(MemoryUsageProcessor::class, [
             'real_usage' => true,
@@ -366,7 +366,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_processor_with_randomly_ordered_options()
+    public function it_creates_processor_with_randomly_ordered_options(): void
     {
         $processor = $this->factory->createProcessor(MemoryUsageProcessor::class, [
             'use_formatting' => false,
@@ -381,7 +381,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_logger_handlers_option_is_not_valid()
+    public function it_raises_exception_if_logger_handlers_option_is_not_valid(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -397,7 +397,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_logger_processors_option_is_not_valid()
+    public function it_raises_exception_if_logger_processors_option_is_not_valid(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -413,7 +413,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_logger_handlers_item_option_is_not_valid()
+    public function it_raises_exception_if_logger_handlers_item_option_is_not_valid(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -434,7 +434,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_logger_processors_item_option_is_not_valid()
+    public function it_raises_exception_if_logger_processors_item_option_is_not_valid(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -455,7 +455,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_handler_formatter_option_is_not_valid()
+    public function it_raises_exception_if_handler_formatter_option_is_not_valid(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -482,7 +482,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_for_invalid_factory_input()
+    public function it_raises_exception_for_invalid_factory_input(): void
     {
         try {
             $this->factory->createLogger('test', [
@@ -502,7 +502,7 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_for_invalid_factory_input_options()
+    public function it_raises_exception_for_invalid_factory_input_options(): void
     {
         try {
             $this->factory->createLogger('test', [

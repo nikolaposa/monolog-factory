@@ -24,7 +24,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /** @var ContainerInterface */
     protected $container;
     
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->container = new ContainerAsset([
             'Config' => [
@@ -109,7 +109,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_from_configuration()
+    public function it_creates_logger_from_configuration(): void
     {
         $factory = new DiContainerLoggerFactory('logger1');
 
@@ -125,7 +125,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_from_alias_configuration_service()
+    public function it_creates_logger_from_alias_configuration_service(): void
     {
         $factory = new DiContainerLoggerFactory('logger3');
 
@@ -152,7 +152,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_empty_logger_if_specified_does_not_exist_in_configuration()
+    public function it_creates_empty_logger_if_specified_does_not_exist_in_configuration(): void
     {
         $factory = new DiContainerLoggerFactory();
 
@@ -168,7 +168,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_when_invoked_using_static_variance()
+    public function it_creates_logger_when_invoked_using_static_variance(): void
     {
         $factory = [DiContainerLoggerFactory::class, 'logger1'];
 
@@ -181,7 +181,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_container_not_passed_in_arguments_when_invoked_using_static_variance()
+    public function it_raises_exception_if_container_not_passed_in_arguments_when_invoked_using_static_variance(): void
     {
         $factory = [DiContainerLoggerFactory::class, 'logger1'];
 
@@ -200,7 +200,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_by_resolving_handler_from_container()
+    public function it_creates_logger_by_resolving_handler_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
@@ -218,7 +218,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_handler_cannot_be_resolved_from_container()
+    public function it_raises_exception_if_handler_cannot_be_resolved_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('invalid_handler_logger');
 
@@ -234,7 +234,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_formatter_cannot_be_resolved_from_container()
+    public function it_raises_exception_if_formatter_cannot_be_resolved_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('invalid_formatter_logger');
 
@@ -250,7 +250,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_raises_exception_if_processor_cannot_be_resolved_from_container()
+    public function it_raises_exception_if_processor_cannot_be_resolved_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('invalid_processor_logger');
 
@@ -266,7 +266,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_by_resolving_handler_formatter_from_container()
+    public function it_creates_logger_by_resolving_handler_formatter_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
@@ -284,7 +284,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_by_resolving_processor_from_container()
+    public function it_creates_logger_by_resolving_processor_from_container(): void
     {
         $factory = new DiContainerLoggerFactory('logger2');
 
