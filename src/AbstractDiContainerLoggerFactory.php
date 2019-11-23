@@ -14,19 +14,13 @@ use Throwable;
 
 abstract class AbstractDiContainerLoggerFactory
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $loggerName;
 
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     private $container;
 
-    /**
-     * @var LoggerFactory
-     */
+    /** @var LoggerFactory */
     private $loggerFactory;
 
     public function __construct(string $loggerName = 'default')
@@ -34,7 +28,7 @@ abstract class AbstractDiContainerLoggerFactory
         $this->loggerName = $loggerName;
     }
 
-    public function __invoke(ContainerInterface $container) : Logger
+    public function __invoke(ContainerInterface $container): Logger
     {
         $this->container = $container;
 
@@ -47,7 +41,7 @@ abstract class AbstractDiContainerLoggerFactory
         return $this->createLogger($loggerConfig);
     }
 
-    public static function __callStatic(string $name, array $arguments) : Logger
+    public static function __callStatic(string $name, array $arguments): Logger
     {
         if (0 === count($arguments) || ! ($container = current($arguments)) instanceof ContainerInterface) {
             throw new InvalidArgumentException(sprintf(
@@ -60,9 +54,9 @@ abstract class AbstractDiContainerLoggerFactory
         return (new static($name))->__invoke($container);
     }
 
-    abstract protected function getLoggerConfig(string $loggerName) : array;
+    abstract protected function getLoggerConfig(string $loggerName): array;
 
-    protected function createLogger(array $config) : Logger
+    protected function createLogger(array $config): Logger
     {
         $name = $config['name'];
         unset($config['name']);
@@ -82,12 +76,12 @@ abstract class AbstractDiContainerLoggerFactory
         return $this->getLoggerFactory()->createLogger($name, $config);
     }
 
-    protected function getContainer() : ContainerInterface
+    protected function getContainer(): ContainerInterface
     {
         return $this->container;
     }
 
-    private function prepareHandlers(array $handlers) : array
+    private function prepareHandlers(array $handlers): array
     {
         return array_map(function ($handler) {
             if (is_string($handler)) {
@@ -102,7 +96,7 @@ abstract class AbstractDiContainerLoggerFactory
         }, $handlers);
     }
 
-    private function prepareProcessors(array $processors) : array
+    private function prepareProcessors(array $processors): array
     {
         return array_map(function ($processor) {
             if (is_string($processor)) {
@@ -113,17 +107,17 @@ abstract class AbstractDiContainerLoggerFactory
         }, $processors);
     }
 
-    private function resolveHandler(string $handlerName) : HandlerInterface
+    private function resolveHandler(string $handlerName): HandlerInterface
     {
         return $this->resolveFromContainer($handlerName);
     }
 
-    private function resolveFormatter(string $formatterName) : FormatterInterface
+    private function resolveFormatter(string $formatterName): FormatterInterface
     {
         return $this->resolveFromContainer($formatterName);
     }
 
-    private function resolveProcessor(string $processorName) : callable
+    private function resolveProcessor(string $processorName): callable
     {
         return $this->resolveFromContainer($processorName);
     }
@@ -142,7 +136,7 @@ abstract class AbstractDiContainerLoggerFactory
         return null;
     }
 
-    private function getLoggerFactory() : LoggerFactory
+    private function getLoggerFactory(): LoggerFactory
     {
         if (null === $this->loggerFactory) {
             $this->loggerFactory = new LoggerFactory();

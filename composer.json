@@ -40,8 +40,8 @@
     },
     "scripts": {
         "test": "phpunit --colors=always",
-        "cs-fix": "php-cs-fixer fix --config=.php_cs",
-        "cs-check": "php-cs-fixer fix --config=.php_cs -v --diff --dry-run"
+        "cs-fix": "php-cs-fixer fix --config=.php_cs --allow-risky=yes",
+        "cs-check": "php-cs-fixer fix --config=.php_cs --allow-risky=yes -v --diff --dry-run"
     },
     "extra": {
         "branch-alias": {

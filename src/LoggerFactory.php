@@ -15,12 +15,10 @@ use MonologFactory\Options\ProcessorOptions;
 
 class LoggerFactory
 {
-    /**
-     * @var Cascader
-     */
+    /** @var Cascader */
     private $cascader;
 
-    public function createLogger(string $name, array $options) : Logger
+    public function createLogger(string $name, array $options): Logger
     {
         $options = LoggerOptions::fromArray($options);
         
@@ -37,7 +35,7 @@ class LoggerFactory
         return $logger;
     }
 
-    public function createHandler(string $name, array $options = []) : HandlerInterface
+    public function createHandler(string $name, array $options = []): HandlerInterface
     {
         $options = HandlerOptions::fromArray($options);
 
@@ -55,21 +53,21 @@ class LoggerFactory
         return $handler;
     }
 
-    public function createFormatter(string $name, array $options = []) : FormatterInterface
+    public function createFormatter(string $name, array $options = []): FormatterInterface
     {
         $options = FormatterOptions::fromArray($options);
 
         return $this->createObject($name, $options->toArray());
     }
 
-    public function createProcessor(string $name, array $options = []) : callable
+    public function createProcessor(string $name, array $options = []): callable
     {
         $options = ProcessorOptions::fromArray($options);
 
         return $this->createObject($name, $options->toArray());
     }
 
-    protected function createHandlerFromOptions($handler) : HandlerInterface
+    protected function createHandlerFromOptions($handler): HandlerInterface
     {
         if ($handler instanceof HandlerInterface) {
             return $handler;
@@ -80,7 +78,7 @@ class LoggerFactory
         return $this->createHandler($factoryInput->getName(), $factoryInput->getOptions());
     }
 
-    protected function createFormatterFromOptions($formatter) : FormatterInterface
+    protected function createFormatterFromOptions($formatter): FormatterInterface
     {
         if ($formatter instanceof FormatterInterface) {
             return $formatter;
@@ -91,7 +89,7 @@ class LoggerFactory
         return $this->createFormatter($factoryInput->getName(), $factoryInput->getOptions());
     }
 
-    protected function createProcessorFromOptions($processor) : callable
+    protected function createProcessorFromOptions($processor): callable
     {
         if (is_callable($processor)) {
             return $processor;
@@ -113,7 +111,7 @@ class LoggerFactory
         return $this->getCascader()->create($className, $creationOptions);
     }
 
-    final protected function getCascader() : Cascader
+    final protected function getCascader(): Cascader
     {
         if (null === $this->cascader) {
             $this->cascader = new Cascader();

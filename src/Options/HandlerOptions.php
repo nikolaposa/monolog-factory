@@ -14,7 +14,7 @@ final class HandlerOptions extends AbstractOptions
         return $this->get('formatter', false);
     }
 
-    public function getProcessors() : array
+    public function getProcessors(): array
     {
         return $this->get('processors', []);
     }

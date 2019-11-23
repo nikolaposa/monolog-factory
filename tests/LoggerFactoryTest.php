@@ -22,9 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 class LoggerFactoryTest extends TestCase
 {
-    /**
-     * @var LoggerFactory
-     */
+    /** @var LoggerFactory */
     protected $factory;
 
     protected function setUp()

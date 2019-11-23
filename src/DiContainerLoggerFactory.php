@@ -8,7 +8,7 @@ final class DiContainerLoggerFactory extends AbstractDiContainerLoggerFactory
 {
     const CONFIG_KEY = 'logger';
 
-    protected function getLoggerConfig(string $loggerName) : array
+    protected function getLoggerConfig(string $loggerName): array
     {
         $config = [];
 

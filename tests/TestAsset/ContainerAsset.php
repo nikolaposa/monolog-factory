@@ -8,9 +8,7 @@ use Psr\Container\ContainerInterface;
 
 final class ContainerAsset implements ContainerInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private $entries;
 
     public function __construct(array $entries)
@@ -23,7 +21,7 @@ final class ContainerAsset implements ContainerInterface
         return $this->entries[$id] ?? null;
     }
 
-    public function has($id) : bool
+    public function has($id): bool
     {
         return array_key_exists($id, $this->entries);
     }

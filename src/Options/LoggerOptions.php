@@ -9,12 +9,12 @@ use MonologFactory\Exception\InvalidOptionsException;
 
 final class LoggerOptions extends AbstractOptions
 {
-    public function getHandlers() : array
+    public function getHandlers(): array
     {
         return $this->get('handlers', []);
     }
 
-    public function getProcessors() : array
+    public function getProcessors(): array
     {
         return $this->get('processors', []);
     }

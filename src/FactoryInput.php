@@ -8,14 +8,10 @@ use MonologFactory\Exception\InvalidFactoryInputException;
 
 final class FactoryInput
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $options;
     
     private function __construct(string $name, array $options)
@@ -40,12 +36,12 @@ final class FactoryInput
         return new self($name, $options);
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getOptions() : array
+    public function getOptions(): array
     {
         return $this->options;
     }

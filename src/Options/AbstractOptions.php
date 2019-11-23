@@ -6,9 +6,7 @@ namespace MonologFactory\Options;
 
 abstract class AbstractOptions
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $options;
     
     protected function __construct(array $options)
@@ -24,12 +22,12 @@ abstract class AbstractOptions
         return new static($options);
     }
 
-    public function toArray() : array
+    public function toArray(): array
     {
         return $this->options;
     }
 
-    protected static function normalize(array $options) : array
+    protected static function normalize(array $options): array
     {
         return $options;
     }

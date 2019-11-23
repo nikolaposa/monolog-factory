@@ -21,9 +21,7 @@ use Psr\Container\ContainerInterface;
 
 class DiContainerLoggerFactoryTest extends TestCase
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
     
     protected function setUp()
