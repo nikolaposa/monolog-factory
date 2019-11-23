@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MonologFactory\Tests\TestAsset;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 final class ContainerAsset implements ContainerInterface
 {

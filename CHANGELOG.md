@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased][Unreleased]
+### Changed
+- PHP 7.2 is now the minimum required version
+- Monolog 2.0 is now the minimum required version
+
 ## 2.0.2 - 2018-10-08
 ### Fixed
 - [4: Cannot define configuration for GroupHandler](https://github.com/nikolaposa/monolog-factory/issues/4)

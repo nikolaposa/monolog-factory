@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MonologFactory\Tests\TestAsset\Logger;
 
-use Interop\Container\ContainerInterface;
 use Monolog\Handler\NullHandler;
+use Psr\Container\ContainerInterface;
 
 class HandlerFactoryAsset
 {

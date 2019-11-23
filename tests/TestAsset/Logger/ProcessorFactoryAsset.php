@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace MonologFactory\Tests\TestAsset\Logger;
 
-use Interop\Container\ContainerInterface;
 use Monolog\Processor\MemoryUsageProcessor;
+use Psr\Container\ContainerInterface;
 
 class ProcessorFactoryAsset
 {

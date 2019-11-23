@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MonologFactory\Tests;
 
-use Interop\Container\ContainerInterface;
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
@@ -18,6 +17,7 @@ use MonologFactory\Exception\LoggerComponentNotResolvedException;
 use MonologFactory\Tests\TestAsset\ContainerAsset;
 use MonologFactory\Tests\TestAsset\Logger\ProcessorFactoryAsset;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 class DiContainerLoggerFactoryTest extends TestCase
 {
@@ -193,7 +193,7 @@ class DiContainerLoggerFactoryTest extends TestCase
             $this->fail('Exception should have been raised');
         } catch (InvalidArgumentException $ex) {
             $this->assertEquals(
-                'The first argument for MonologFactory\\DiContainerLoggerFactory must be of type Interop\\Container\\ContainerInterface',
+                'The first argument for ' . DiContainerLoggerFactory::class . ' must be of type ' . ContainerInterface::class,
                 $ex->getMessage()
             );
         }

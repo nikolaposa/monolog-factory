@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace MonologFactory;
 
-use Interop\Container\ContainerInterface;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
 use MonologFactory\Exception\InvalidArgumentException;
 use MonologFactory\Exception\LoggerComponentNotResolvedException;
+use Psr\Container\ContainerInterface;
 use Throwable;
 
 abstract class AbstractDiContainerLoggerFactory
