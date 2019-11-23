@@ -268,6 +268,7 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_handler_with_formatter_in_options(): void
     {
+        /** @var NativeMailerHandler $handler */
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
             'to' => 'test@example.com',
             'subject' => 'Test',
@@ -286,6 +287,7 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_handler_with_processors_in_options(): void
     {
+        /** @var NativeMailerHandler $handler */
         $handler = $this->factory->createHandler(NativeMailerHandler::class, [
             'to' => 'test@example.com',
             'subject' => 'Test',
