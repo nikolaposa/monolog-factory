@@ -218,7 +218,7 @@ class DiContainerLoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
+            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
         }
     }
 
@@ -234,7 +234,7 @@ class DiContainerLoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
+            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
         }
     }
 
@@ -250,7 +250,7 @@ class DiContainerLoggerFactoryTest extends TestCase
 
             $this->fail('Exception should have been raised');
         } catch (LoggerComponentNotResolvedException $ex) {
-            $this->assertContains('Logger component could not be resolved', $ex->getMessage());
+            $this->assertStringContainsString('Logger component could not be resolved', $ex->getMessage());
         }
     }
 

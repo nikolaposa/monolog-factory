@@ -62,7 +62,7 @@ class LoggerFactoryTest extends TestCase
     {
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
-                new NullHandler(),
+                new TestHandler(),
             ],
             'processors' => [
                 new PsrLogMessageProcessor(),
@@ -71,7 +71,7 @@ class LoggerFactoryTest extends TestCase
 
         $this->assertCount(1, $logger->getHandlers());
         $this->assertCount(1, $logger->getProcessors());
-        $this->assertInstanceOf(NullHandler::class, current($logger->getHandlers()));
+        $this->assertInstanceOf(TestHandler::class, current($logger->getHandlers()));
         $this->assertInstanceOf(PsrLogMessageProcessor::class, current($logger->getProcessors()));
     }
 
@@ -100,7 +100,7 @@ class LoggerFactoryTest extends TestCase
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
                 [
-                    'name' => NullHandler::class,
+                    'name' => TestHandler::class,
                     'options' => [
                         'level' => Logger::INFO,
                         'formatter' => new ScalarFormatter(),
@@ -118,7 +118,7 @@ class LoggerFactoryTest extends TestCase
         $this->assertCount(1, $logger->getProcessors());
 
         $handler = current($logger->getHandlers());
-        $this->assertInstanceOf(NullHandler::class, $handler);
+        $this->assertInstanceOf(TestHandler::class, $handler);
         $this->assertSame(Logger::INFO, $handler->getLevel());
         $this->assertInstanceOf(ScalarFormatter::class, $handler->getFormatter());
 
@@ -161,7 +161,7 @@ class LoggerFactoryTest extends TestCase
         $logger = $this->factory->createLogger('test', [
             'handlers' => [
                 [
-                    'name' => NullHandler::class,
+                    'name' => TestHandler::class,
                 ],
             ],
             'processors' => [
@@ -185,9 +185,9 @@ class LoggerFactoryTest extends TestCase
      */
     public function it_creates_handler_with_no_options(): void
     {
-        $handler = $this->factory->createHandler(NullHandler::class);
+        $handler = $this->factory->createHandler(TestHandler::class);
 
-        $this->assertInstanceOf(NullHandler::class, $handler);
+        $this->assertInstanceOf(TestHandler::class, $handler);
     }
 
     /**
@@ -234,7 +234,10 @@ class LoggerFactoryTest extends TestCase
     {
         $handler = $this->factory->createHandler(RollbarHandler::class, [
             'rollbar_logger' => [
-                'enabled' => false,
+                'config' => [
+                    'enabled' => false,
+                    'access_token' => 'abcdefghijklmnopqrstuvwxyz123456',
+                ],
             ],
             'level' => Logger::ERROR,
         ]);
@@ -472,7 +475,7 @@ class LoggerFactoryTest extends TestCase
             $this->factory->createLogger('test', [
                 'handlers' => [
                     [
-                        'name' => NullHandler::class,
+                        'name' => TestHandler::class,
                         'options' => [
                             'level' => Logger::INFO,
                             'formatter' => 'invalid',
@@ -499,7 +502,7 @@ class LoggerFactoryTest extends TestCase
             $this->factory->createLogger('test', [
                 'handlers' => [
                     [
-                        'foo' => NullHandler::class,
+                        'foo' => TestHandler::class,
                     ],
                 ],
             ]);
@@ -519,7 +522,7 @@ class LoggerFactoryTest extends TestCase
             $this->factory->createLogger('test', [
                 'handlers' => [
                     [
-                        'name' => NullHandler::class,
+                        'name' => TestHandler::class,
                         'options' => 'invalid',
                     ],
                 ],
