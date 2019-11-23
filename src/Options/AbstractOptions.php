@@ -16,7 +16,6 @@ abstract class AbstractOptions
     
     public static function fromArray(array $options)
     {
-        $options = static::normalize($options);
         static::validate($options);
 
         return new static($options);
@@ -27,12 +26,7 @@ abstract class AbstractOptions
         return $this->options;
     }
 
-    protected static function normalize(array $options): array
-    {
-        return $options;
-    }
-
-    protected static function validate(array $options)
+    protected static function validate(array $options): void
     {
     }
 

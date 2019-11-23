@@ -9,31 +9,34 @@ use MonologFactory\Exception\InvalidOptions;
 
 final class HandlerOptions extends AbstractOptions
 {
+    public const OPTIONS_FORMATTER = 'formatter';
+    public const OPTIONS_PROCESSORS = 'processors';
+
     public function getFormatter()
     {
-        return $this->get('formatter', false);
+        return $this->get(self::OPTIONS_FORMATTER, false);
     }
 
     public function getProcessors(): array
     {
-        return $this->get('processors', []);
+        return $this->get(self::OPTIONS_PROCESSORS, []);
     }
     
-    protected static function validate(array $options)
+    protected static function validate(array $options): void
     {
-        if (array_key_exists('formatter', $options)) {
-            $formatter = $options['formatter'];
+        if (array_key_exists(self::OPTIONS_FORMATTER, $options)) {
+            $formatter = $options[self::OPTIONS_FORMATTER];
             
             if (! ($formatter instanceof FormatterInterface || is_array($formatter))) {
                 throw InvalidOptions::invalidFormatter($formatter);
             }
         }
 
-        if (array_key_exists('processors', $options)) {
-            $processors = $options['processors'];
+        if (array_key_exists(self::OPTIONS_PROCESSORS, $options)) {
+            $processors = $options[self::OPTIONS_PROCESSORS];
 
             if (! is_array($processors)) {
-                throw InvalidOptions::invalidProcessors($options['processors']);
+                throw InvalidOptions::invalidProcessors($options[self::OPTIONS_PROCESSORS]);
             }
 
             foreach ($processors as $processor) {

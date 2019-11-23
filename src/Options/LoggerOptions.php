@@ -9,20 +9,23 @@ use MonologFactory\Exception\InvalidOptions;
 
 final class LoggerOptions extends AbstractOptions
 {
+    public const OPTIONS_HANDLERS = 'handlers';
+    public const OPTIONS_PROCESSORS = 'processors';
+
     public function getHandlers(): array
     {
-        return $this->get('handlers', []);
+        return $this->get(self::OPTIONS_HANDLERS, []);
     }
 
     public function getProcessors(): array
     {
-        return $this->get('processors', []);
+        return $this->get(self::OPTIONS_PROCESSORS, []);
     }
 
-    protected static function validate(array $options)
+    protected static function validate(array $options): void
     {
-        if (array_key_exists('handlers', $options)) {
-            $handlers = $options['handlers'];
+        if (array_key_exists(self::OPTIONS_HANDLERS, $options)) {
+            $handlers = $options[self::OPTIONS_HANDLERS];
 
             if (! is_array($handlers)) {
                 throw InvalidOptions::invalidHandlers($handlers);
@@ -35,11 +38,11 @@ final class LoggerOptions extends AbstractOptions
             }
         }
 
-        if (array_key_exists('processors', $options)) {
-            $processors = $options['processors'];
+        if (array_key_exists(self::OPTIONS_PROCESSORS, $options)) {
+            $processors = $options[self::OPTIONS_PROCESSORS];
 
             if (! is_array($processors)) {
-                throw InvalidOptions::invalidProcessors($options['processors']);
+                throw InvalidOptions::invalidProcessors($options[self::OPTIONS_PROCESSORS]);
             }
 
             foreach ($processors as $processor) {
