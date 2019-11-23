@@ -15,13 +15,13 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "monolog/monolog": "^1.0",
+        "php": "^7.2",
+        "monolog/monolog": "^2.0",
         "container-interop/container-interop": "^1.0",
         "nikolaposa/cascader": "^1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7 || ^6.0",
+        "phpunit/phpunit": "^8.0",
         "friendsofphp/php-cs-fixer": "^2.0",
         "sentry/sentry": "^1.7"
     },
@@ -42,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "3.0-dev"
         }
     }
 }
