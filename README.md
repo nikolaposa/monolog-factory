@@ -103,6 +103,11 @@ return [
                         ],
                         'buffer_limit' => 5,
                     ],
+                    'processors' => [
+                        [
+                            'name' => MemoryUsageProcessor::class,
+                        ],
+                    ],
                 ],
             ],
             'processors' => [
