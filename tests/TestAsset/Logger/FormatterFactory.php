@@ -7,7 +7,7 @@ namespace MonologFactory\Tests\TestAsset\Logger;
 use Monolog\Formatter\HtmlFormatter;
 use Psr\Container\ContainerInterface;
 
-class FormatterFactoryAsset
+class FormatterFactory
 {
     public function __invoke(ContainerInterface $container)
     {

@@ -6,7 +6,7 @@ namespace MonologFactory\Tests\TestAsset;
 
 use Psr\Container\ContainerInterface;
 
-final class ContainerAsset implements ContainerInterface
+final class TestContainer implements ContainerInterface
 {
     /** @var array */
     private $entries;

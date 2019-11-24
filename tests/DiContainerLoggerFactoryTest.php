@@ -14,8 +14,9 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use MonologFactory\DiContainerLoggerFactory;
 use MonologFactory\Exception\BadStaticDiContainerFactoryUsage;
 use MonologFactory\Exception\CannotResolveLoggerComponent;
-use MonologFactory\Tests\TestAsset\ContainerAsset;
-use MonologFactory\Tests\TestAsset\Logger\ProcessorFactoryAsset;
+use MonologFactory\Tests\TestAsset\Logger\ErroneousHandlerFactory;
+use MonologFactory\Tests\TestAsset\TestContainer;
+use MonologFactory\Tests\TestAsset\Logger\ProcessorFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -26,7 +27,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     
     protected function setUp(): void
     {
-        $this->container = new ContainerAsset([
+        $this->container = new TestContainer([
             'Config' => [
                 'logger' => [
                     'logger1' => [
@@ -67,7 +68,7 @@ class DiContainerLoggerFactoryTest extends TestCase
                             ],
                         ],
                         'processors' => [
-                            ProcessorFactoryAsset::class,
+                            ProcessorFactory::class,
                         ],
                     ],
                     'invalid_handler_logger' => [
@@ -95,7 +96,13 @@ class DiContainerLoggerFactoryTest extends TestCase
                         'processors' => [
                             'NonExistingProcessor',
                         ],
-                    ]
+                    ],
+                    'erroneous_handler_logger' => [
+                        'name' => 'invalid_processor_logger',
+                        'handlers' => [
+                            ErroneousHandlerFactory::class,
+                        ],
+                    ],
                 ],
             ],
             'DefaultLoggerHandler' => new NullHandler(),
@@ -125,7 +132,7 @@ class DiContainerLoggerFactoryTest extends TestCase
     {
         $factory = new DiContainerLoggerFactory('logger3');
 
-        $logger = $factory(new ContainerAsset([
+        $logger = $factory(new TestContainer([
             'config' => [
                 'logger' => [
                     'logger3' => [
@@ -249,6 +256,22 @@ class DiContainerLoggerFactoryTest extends TestCase
             $this->fail('Exception should have been raised');
         } catch (CannotResolveLoggerComponent $ex) {
             $this->assertStringContainsString("Cannot resolve 'NonExistingProcessor'", $ex->getMessage());
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_raises_exception_if_error_occurs_during_component_resolution(): void
+    {
+        $factory = new DiContainerLoggerFactory('erroneous_handler_logger');
+
+        try {
+            $factory($this->container);
+
+            $this->fail('Exception should have been raised');
+        } catch (CannotResolveLoggerComponent $ex) {
+            $this->assertStringContainsString('Resolution of a \'' . ErroneousHandlerFactory::class . '\' logger component has failed', $ex->getMessage());
         }
     }
 
