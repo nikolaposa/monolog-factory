@@ -6,7 +6,10 @@ namespace MonologFactory\Tests;
 
 use Closure;
 use Monolog\Formatter\ScalarFormatter;
+use Monolog\Handler\BufferHandler;
+use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
+use Monolog\Handler\RollbarHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\MemoryUsageProcessor;
@@ -14,6 +17,7 @@ use Monolog\Processor\PsrLogMessageProcessor;
 use MonologFactory\Exception\InvalidConfig;
 use MonologFactory\LoggerFactory;
 use PHPUnit\Framework\TestCase;
+use Rollbar\RollbarLogger;
 
 class LoggerFactoryTest extends TestCase
 {
@@ -88,6 +92,146 @@ class LoggerFactoryTest extends TestCase
         $this->assertInstanceOf(PsrLogMessageProcessor::class, $processor);
 
         $this->assertSame('Europe/Belgrade', $logger->getTimezone()->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_with_handlers_and_processors_objects(): void
+    {
+        $logger = $this->factory->create('test', [
+            'handlers' => [
+                new TestHandler(),
+            ],
+            'processors' => [
+                new PsrLogMessageProcessor(),
+            ],
+        ]);
+
+        $this->assertCount(1, $logger->getHandlers());
+        $this->assertCount(1, $logger->getProcessors());
+        $this->assertInstanceOf(TestHandler::class, current($logger->getHandlers()));
+        $this->assertInstanceOf(PsrLogMessageProcessor::class, current($logger->getProcessors()));
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_with_handler_level_processors(): void
+    {
+        $logger = $this->factory->create('test', [
+            'handlers' => [
+                [
+                    'name' => TestHandler::class,
+                    'params' => [
+                        'level' => Logger::INFO,
+                    ],
+                    'processors' => [
+                        new MemoryUsageProcessor(),
+                        [
+                            'name' => PsrLogMessageProcessor::class,
+                        ]
+                    ],
+                ],
+            ],
+            'processors' => [
+                [
+                    'name' => PsrLogMessageProcessor::class,
+                ],
+            ],
+            'timezone' => 'Europe/Belgrade',
+        ]);
+
+        $this->assertCount(1, $logger->getHandlers());
+        $handler = current($logger->getHandlers());
+        $this->assertInstanceOf(TestHandler::class, $handler);
+        $this->assertSame(Logger::INFO, $handler->getLevel());
+        $this->assertInstanceOf(MemoryUsageProcessor::class, $handler->popProcessor());
+        $this->assertInstanceOf(PsrLogMessageProcessor::class, $handler->popProcessor());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_with_randomly_ordered_handler_parameters(): void
+    {
+        $logger = $this->factory->create('test', [
+            'handlers' => [
+                [
+                    'name' => NativeMailerHandler::class,
+                    'params' => [
+                        'subject' => 'Test',
+                        'from' => 'noreply@example.com',
+                        'level' => Logger::ALERT,
+                        'to' => 'test@example.com',
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertCount(1, $logger->getHandlers());
+        $handler = current($logger->getHandlers());
+        $this->assertInstanceOf(NativeMailerHandler::class, $handler);
+        $this->assertContains('test@example.com', self::readPrivateProperty($handler, 'to'));
+        $this->assertSame('Test', self::readPrivateProperty($handler, 'subject'));
+        $this->assertContains('From: noreply@example.com', self::readPrivateProperty($handler, 'headers'));
+        $this->assertSame(Logger::ALERT, $handler->getLevel());
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_with_nested_object_handler_dependency_configuration(): void
+    {
+        $logger = $this->factory->create('test', [
+            'handlers' => [
+                [
+                    'name' => RollbarHandler::class,
+                    'params' => [
+                        'rollbar_logger' => [
+                            'config' => [
+                                'enabled' => false,
+                                'access_token' => 'abcdefghijklmnopqrstuvwxyz123456',
+                            ],
+                        ],
+                        'level' => Logger::ERROR,
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertCount(1, $logger->getHandlers());
+        $handler = current($logger->getHandlers());
+        $this->assertInstanceOf(RollbarHandler::class, $handler);
+        $this->assertInstanceOf(RollbarLogger::class, self::readPrivateProperty($handler, 'rollbarLogger'));
+    }
+
+    /**
+     * @test
+     */
+    public function it_creates_logger_with_interface_handler_dependency(): void
+    {
+        $logger = $this->factory->create('test', [
+            'handlers' => [
+                [
+                    'name' => BufferHandler::class,
+                    'params' => [
+                        'handler' => [
+                            '__class__' => NativeMailerHandler::class,
+                            'to' => 'test@example.com',
+                            'subject' => 'Test',
+                            'from' => 'noreply@example.com',
+                        ],
+                        'buffer_limit' => 5,
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertCount(1, $logger->getHandlers());
+        $handler = current($logger->getHandlers());
+        $this->assertInstanceOf(BufferHandler::class, $handler);
+        $this->assertInstanceOf(NativeMailerHandler::class, self::readPrivateProperty($handler, 'handler'));
     }
 
     /**
