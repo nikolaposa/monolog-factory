@@ -20,10 +20,7 @@ abstract class BaseConfig
         return $config;
     }
 
-    protected static function defaults(): array
-    {
-        return [];
-    }
+    abstract protected static function defaults(): array;
 
     /**
      * @throws InvalidConfig
