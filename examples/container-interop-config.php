@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Monolog\Formatter\HtmlFormatter;
 use Monolog\Handler\NativeMailerHandler;
@@ -15,14 +17,15 @@ return [
             'handlers' => [
                 [
                     'name' => NativeMailerHandler::class,
-                    'options' => [
+                    'params' => [
                         'to' => 'test@example.com',
                         'subject' => 'Test',
                         'from' => 'noreply@example.com',
                         'level' => Logger::ALERT,
-                        'formatter' => [
-                            'name' => HtmlFormatter::class,
-                        ],
+
+                    ],
+                    'formatter' => [
+                        'name' => HtmlFormatter::class,
                     ],
                 ],
             ],
@@ -38,13 +41,13 @@ return [
                 'DefaultLoggerHandler', //service name
                 [
                     'name' => NativeMailerHandler::class,
-                    'options' => [
+                    'params' => [
                         'to' => 'test@example.com',
                         'subject' => 'Test',
                         'from' => 'noreply@example.com',
                         'level' => Logger::ALERT,
-                        'formatter' => 'HtmlLoggerFormatter', //service name
                     ],
+                    'formatter' => 'HtmlLoggerFormatter', //service name
                 ],
             ],
             'processors' => [

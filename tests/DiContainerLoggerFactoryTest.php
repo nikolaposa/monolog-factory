@@ -34,14 +34,14 @@ class DiContainerLoggerFactoryTest extends TestCase
                         'handlers' => [
                             [
                                 'name' => NativeMailerHandler::class,
-                                'options' => [
+                                'params' => [
                                     'to' => 'test@example.com',
                                     'subject' => 'Test',
                                     'from' => 'noreply@example.com',
                                     'level' => Logger::ALERT,
-                                    'formatter' => [
-                                        'name' => HtmlFormatter::class,
-                                    ],
+                                ],
+                                'formatter' => [
+                                    'name' => HtmlFormatter::class,
                                 ],
                             ],
                         ],
@@ -57,13 +57,13 @@ class DiContainerLoggerFactoryTest extends TestCase
                             'DefaultLoggerHandler',
                             [
                                 'name' => NativeMailerHandler::class,
-                                'options' => [
+                                'params' => [
                                     'to' => 'test@example.com',
                                     'subject' => 'Test',
                                     'from' => 'noreply@example.com',
                                     'level' => Logger::ALERT,
-                                    'formatter' => 'HtmlLoggerFormatter',
                                 ],
+                                'formatter' => 'HtmlLoggerFormatter',
                             ],
                         ],
                         'processors' => [
@@ -81,9 +81,7 @@ class DiContainerLoggerFactoryTest extends TestCase
                         'handlers' => [
                             [
                                 'name' => NullHandler::class,
-                                'options' => [
-                                    'formatter' => 'NonExistingFormatter',
-                                ],
+                                'formatter' => 'NonExistingFormatter',
                             ],
                         ],
                     ],

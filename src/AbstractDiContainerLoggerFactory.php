@@ -7,6 +7,8 @@ namespace MonologFactory;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Logger;
+use MonologFactory\Config\HandlerConfig;
+use MonologFactory\Config\LoggerConfig;
 use MonologFactory\Exception\BadStaticDiContainerFactoryUsage;
 use MonologFactory\Exception\CannotResolveLoggerComponent;
 use Psr\Container\ContainerInterface;
@@ -33,9 +35,9 @@ abstract class AbstractDiContainerLoggerFactory
         $this->container = $container;
 
         $loggerConfig = array_merge([
-            'name' => $this->loggerName,
-            'handlers' => [],
-            'processors' => [],
+            LoggerConfig::NAME => $this->loggerName,
+            LoggerConfig::HANDLERS => [],
+            LoggerConfig::PROCESSORS => [],
         ], $this->getLoggerConfig($this->loggerName));
 
         return $this->createLogger($loggerConfig);
@@ -54,18 +56,15 @@ abstract class AbstractDiContainerLoggerFactory
 
     protected function createLogger(array $config): Logger
     {
-        $name = $config['name'];
-        unset($config['name']);
-
-        if (is_array($config['handlers'])) {
-            $config['handlers'] = $this->prepareHandlers($config['handlers']);
+        if (is_array($config[LoggerConfig::HANDLERS])) {
+            $config[LoggerConfig::HANDLERS] = $this->prepareHandlers($config[LoggerConfig::HANDLERS]);
         }
 
-        if (is_array($config['processors'])) {
-            $config['processors'] = $this->prepareProcessors($config['processors']);
+        if (is_array($config[LoggerConfig::PROCESSORS])) {
+            $config[LoggerConfig::PROCESSORS] = $this->prepareProcessors($config[LoggerConfig::PROCESSORS]);
         }
 
-        return $this->getLoggerFactory()->createLogger($name, $config);
+        return $this->getLoggerFactory()->create($config[LoggerConfig::NAME], $config);
     }
 
     protected function getContainer(): ContainerInterface
@@ -78,8 +77,8 @@ abstract class AbstractDiContainerLoggerFactory
         return array_map(function ($handler) {
             if (is_string($handler)) {
                 $handler = $this->resolveHandler($handler);
-            } elseif (is_array($handler) && isset($handler['options']['formatter']) && is_string($handler['options']['formatter'])) {
-                $handler['options']['formatter'] = $this->resolveFormatter($handler['options']['formatter']);
+            } elseif (is_array($handler) && isset($handler[HandlerConfig::FORMATTER]) && is_string($handler[HandlerConfig::FORMATTER])) {
+                $handler[HandlerConfig::FORMATTER] = $this->resolveFormatter($handler[HandlerConfig::FORMATTER]);
             }
 
             return $handler;

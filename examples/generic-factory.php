@@ -14,7 +14,7 @@ use MonologFactory\LoggerFactory;
 $loggerFactory = new LoggerFactory();
 
 //manual handler/processor instantiation
-$logger1 = $loggerFactory->createLogger('logger1', [
+$logger1 = $loggerFactory->create('logger1', [
     'handlers' => [
         new NullHandler(),
     ],
@@ -24,18 +24,18 @@ $logger1 = $loggerFactory->createLogger('logger1', [
 ]);
 
 //plain-array handlers/processors configuration
-$logger2 = $loggerFactory->createLogger('logger2', [
+$logger2 = $loggerFactory->create('logger2', [
     'handlers' => [
         [
             'name' => NativeMailerHandler::class,
-            'options' => [
+            'params' => [
                 'to' => 'test@example.com',
                 'subject' => 'Test',
                 'from' => 'noreply@example.com',
                 'level' => Logger::ALERT,
-                'formatter' => [
-                    'name' => HtmlFormatter::class,
-                ],
+            ],
+            'formatter' => [
+                'name' => HtmlFormatter::class,
             ],
         ],
     ],

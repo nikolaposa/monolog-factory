@@ -12,7 +12,8 @@ Besides the generic factory, this package features one that is suitable for usin
 
 ## Installation
 
-The preferred method of installation is via [Composer](http://getcomposer.org/). Run the following command to install the latest version of a package and add it to your project's `composer.json`:
+The preferred method of installation is via [Composer](http://getcomposer.org/). Run the following command to install 
+the latest version of a package and add it to your project's `composer.json`:
 
 ```bash
 composer require nikolaposa/monolog-factory
@@ -31,18 +32,18 @@ use MonologFactory\LoggerFactory;
 
 $loggerFactory = new LoggerFactory();
 
-$logger = $loggerFactory->createLogger('my_logger', [
+$logger = $loggerFactory->create('my_logger', [
     'handlers' => [
         [
             'name' => NativeMailerHandler::class,
-            'options' => [
+            'params' => [
                 'to' => 'test@example.com',
                 'subject' => 'Test',
                 'from' => 'noreply@example.com',
                 'level' => Logger::ALERT,
-                'formatter' => [
-                    'name' => HtmlFormatter::class,
-                ],
+            ],
+            'formatter' => [
+                'name' => HtmlFormatter::class,
             ],
         ],
     ],
@@ -71,14 +72,14 @@ return [
             'handlers' => [
                 [
                     'name' => NativeMailerHandler::class,
-                    'options' => [
+                    'params' => [
                         'to' => 'test@example.com',
                         'subject' => 'Test',
                         'from' => 'noreply@example.com',
                         'level' => Logger::ALERT,
-                        'formatter' => [
-                            'name' => HtmlFormatter::class,
-                        ],
+                    ],
+                    'formatter' => [
+                        'name' => HtmlFormatter::class,
                     ],
                 ],
             ],
@@ -93,7 +94,7 @@ return [
             'handlers' => [
                 [
                     'name' => BufferHandler::class,
-                    'options' => [
+                    'params' => [
                         'handler' => [
                             '__class__' => NativeMailerHandler::class,
                             'to' => 'test@example.com',
