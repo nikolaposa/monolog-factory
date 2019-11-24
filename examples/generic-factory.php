@@ -13,7 +13,7 @@ use MonologFactory\LoggerFactory;
 
 $loggerFactory = new LoggerFactory();
 
-//manual handler/processor instantiation
+//manual handler/processor creation
 $logger1 = $loggerFactory->create('logger1', [
     'handlers' => [
         new NullHandler(),
