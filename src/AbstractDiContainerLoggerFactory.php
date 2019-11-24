@@ -19,11 +19,11 @@ abstract class AbstractDiContainerLoggerFactory
     /** @var string */
     protected $loggerName;
 
+    /** @var LoggerFactory */
+    private static $loggerFactory;
+
     /** @var ContainerInterface */
     private $container;
-
-    /** @var LoggerFactory */
-    private $loggerFactory;
 
     public function __construct(string $loggerName = 'default')
     {
@@ -64,7 +64,7 @@ abstract class AbstractDiContainerLoggerFactory
             $config[LoggerConfig::PROCESSORS] = $this->prepareProcessors($config[LoggerConfig::PROCESSORS]);
         }
 
-        return $this->getLoggerFactory()->create($config[LoggerConfig::NAME], $config);
+        return static::getLoggerFactory()->create($config[LoggerConfig::NAME], $config);
     }
 
     protected function getContainer(): ContainerInterface
@@ -129,12 +129,12 @@ abstract class AbstractDiContainerLoggerFactory
         throw CannotResolveLoggerComponent::unknownService($serviceOrFactory);
     }
 
-    private function getLoggerFactory(): LoggerFactory
+    protected static function getLoggerFactory(): LoggerFactory
     {
-        if (null === $this->loggerFactory) {
-            $this->loggerFactory = new LoggerFactory();
+        if (null === self::$loggerFactory) {
+            self::$loggerFactory = new LoggerFactory();
         }
 
-        return $this->loggerFactory;
+        return self::$loggerFactory;
     }
 }
