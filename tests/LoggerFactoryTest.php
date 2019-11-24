@@ -23,6 +23,8 @@ class LoggerFactoryTest extends TestCase
     protected function setUp(): void
     {
         $this->factory = new LoggerFactory();
+
+        date_default_timezone_set('UTC');
     }
 
     final protected static function readPrivateProperty(object $object, string $property)
@@ -41,11 +43,14 @@ class LoggerFactoryTest extends TestCase
     /**
      * @test
      */
-    public function it_creates_logger_with_no_configuration(): void
+    public function it_creates_logger_with_default_configuration(): void
     {
         $logger = $this->factory->create('test');
 
         $this->assertSame('test', $logger->getName());
+        $this->assertCount(0, $logger->getHandlers());
+        $this->assertCount(0, $logger->getProcessors());
+        $this->assertSame('UTC', $logger->getTimezone()->getName());
     }
 
     /**
@@ -68,6 +73,7 @@ class LoggerFactoryTest extends TestCase
                     'name' => PsrLogMessageProcessor::class,
                 ],
             ],
+            'timezone' => 'Europe/Belgrade',
         ]);
 
         $this->assertCount(1, $logger->getHandlers());
@@ -80,6 +86,8 @@ class LoggerFactoryTest extends TestCase
 
         $processor = current($logger->getProcessors());
         $this->assertInstanceOf(PsrLogMessageProcessor::class, $processor);
+
+        $this->assertSame('Europe/Belgrade', $logger->getTimezone()->getName());
     }
 
     /**
