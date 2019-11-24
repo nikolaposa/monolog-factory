@@ -14,11 +14,18 @@ use MonologFactory\Config\FormatterConfig;
 use MonologFactory\Config\HandlerConfig;
 use MonologFactory\Config\LoggerConfig;
 use MonologFactory\Config\ProcessorConfig;
+use MonologFactory\Helper\GenericObjectFactory;
+use MonologFactory\Helper\ObjectFactory;
 
 class LoggerFactory
 {
-    /** @var Cascader */
-    private $cascader;
+    /** @var ObjectFactory */
+    private $objectFactory;
+    
+    public function __construct(ObjectFactory $objectFactory = null)
+    {
+        $this->objectFactory = $objectFactory ?? new GenericObjectFactory(new Cascader());
+    }
 
     public function create(string $name, array $config = []): Logger
     {
@@ -45,7 +52,7 @@ class LoggerFactory
 
         $handlerConfig = $handler;
 
-        $handler = $this->createObject($handlerConfig->getName(), $handlerConfig->getParameters());
+        $handler = $this->objectFactory->create($handlerConfig->getName(), $handlerConfig->getParameters());
 
         if ($handler instanceof ProcessableHandlerInterface) {
             foreach (array_reverse($handlerConfig->getProcessors()) as $processorConfig) {
@@ -57,6 +64,7 @@ class LoggerFactory
             $handler->setFormatter($this->createFormatter($formatterConfig));
         }
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $handler;
     }
 
@@ -70,7 +78,8 @@ class LoggerFactory
             return $processor;
         }
 
-        return $this->createObject($processor->getName(), $processor->getParameters());
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->objectFactory->create($processor->getName(), $processor->getParameters());
     }
 
     /**
@@ -83,25 +92,7 @@ class LoggerFactory
             return $formatter;
         }
 
-        return $this->createObject($formatter->getName(), $formatter->getParameters());
-    }
-
-    /**
-     * @param string $className
-     * @param array $creationOptions
-     * @return mixed
-     */
-    protected function createObject(string $className, array $creationOptions)
-    {
-        return $this->getCascader()->create($className, $creationOptions);
-    }
-
-    final protected function getCascader(): Cascader
-    {
-        if (null === $this->cascader) {
-            $this->cascader = new Cascader();
-        }
-
-        return $this->cascader;
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->objectFactory->create($formatter->getName(), $formatter->getParameters());
     }
 }
