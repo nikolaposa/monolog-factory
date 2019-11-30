@@ -2,8 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased][Unreleased]
+## 3.0.0 - 2019-11-30
 ### Added
+- Support for Monolog v2
 - Support for configuring Logger timezone
 
 ### Changed
@@ -47,4 +48,4 @@ All notable changes to this project will be documented in this file.
 ## 0.1.0 - 2017-06-11
 
 
-[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/2.0.2...HEAD
+[Unreleased]: https://github.com/nikolaposa/monolog-factory/compare/3.0.0...HEAD
