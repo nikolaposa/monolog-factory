@@ -3,9 +3,22 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased][Unreleased]
+### Added
+- Support for configuring Logger timezone
+
 ### Changed
 - PHP 7.2 is now the minimum required version
 - Monolog 2.0 is now the minimum required version
+- Use PSR-11 instead of ContainerInterop
+- Rename `LoggerFactory::createLogger()` to `LoggerFactory::create()`
+- Reformulate Options into Config
+- Rename `options` configuration key to `params`
+- Handler-level `processors` and `formatter` must be supplied as distinct configuration keys (out of `params`)
+
+### Removed
+- `LoggerFactory::createHandler()`
+- `LoggerFactory::createProcessor()`
+- `LoggerFactory::createFormatter()`
 
 ## 2.0.2 - 2018-10-08
 ### Fixed

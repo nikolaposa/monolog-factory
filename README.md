@@ -6,9 +6,9 @@
 [![Latest Version][ico-version]][link-packagist]
 [![PDS Skeleton][ico-pds]][link-pds]
 
-Monolog Factory facilitates creation of [Monolog][link-monolog] logger objects.
+[Monolog][link-monolog] Factory that allows configuration-based creation of Logger objects.
 
-Besides the generic factory, this package features one that is suitable for using Monolog with [container-interop][link-container-interop].
+In addition to the generic factory, this package features one to be used with [PSR-11][link-psr11] dependency injection containers.
 
 ## Installation
 
@@ -55,7 +55,7 @@ $logger = $loggerFactory->create('my_logger', [
 ]);
 ```
 
-**Container-interop factory configuration**
+**DI container factory configuration**
 
 ```php
 use Monolog\Formatter\HtmlFormatter;
@@ -146,7 +146,7 @@ Released under MIT License - see the [License File](LICENSE) for details.
 [ico-pds]: https://img.shields.io/badge/pds-skeleton-blue.svg
 
 [link-monolog]: https://github.com/Seldaek/monolog
-[link-container-interop]: https://github.com/container-interop/container-interop
+[link-psr11]: https://www.php-fig.org/psr/psr-11/
 [link-examples]: examples
 [link-packagist]: https://packagist.org/packages/nikolaposa/monolog-factory
 [link-build]: https://travis-ci.org/nikolaposa/monolog-factory

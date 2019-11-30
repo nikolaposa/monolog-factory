@@ -1,11 +1,13 @@
 {
     "name": "nikolaposa/monolog-factory",
-    "description": "Factories that facilitate creation of Monolog logger objects",
+    "description": "Configuration-based Monolog factory",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "monolog",
-        "factory"
+        "factory",
+        "container",
+        "psr11"
     ],
     "authors": [
         {
