@@ -139,7 +139,7 @@ See [more examples][link-examples].
 Released under MIT License - see the [License File](LICENSE) for details.
 
 
-[ico-version]: https://poser.pugx.org/nikolaposa/monolog-factory.svg
+[ico-version]: https://poser.pugx.org/nikolaposa/monolog-factory/v/stable
 [ico-build]: https://travis-ci.com/nikolaposa/monolog-factory.svg?branch=master
 [ico-code-coverage]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/badges/coverage.png?b=master
 [ico-code-quality]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/badges/quality-score.png?b=master
