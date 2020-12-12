@@ -140,7 +140,7 @@ Released under MIT License - see the [License File](LICENSE) for details.
 
 
 [ico-version]: https://poser.pugx.org/nikolaposa/monolog-factory/v/stable
-[ico-build]: https://travis-ci.com/nikolaposa/monolog-factory.svg?branch=master
+[ico-build]: https://github.com/nikolaposa/monolog-factory/workflows/Build/badge.svg?branch=master
 [ico-code-coverage]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/badges/coverage.png?b=master
 [ico-code-quality]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/badges/quality-score.png?b=master
 [ico-pds]: https://img.shields.io/badge/pds-skeleton-blue.svg
@@ -149,7 +149,7 @@ Released under MIT License - see the [License File](LICENSE) for details.
 [link-psr11]: https://www.php-fig.org/psr/psr-11/
 [link-examples]: examples
 [link-packagist]: https://packagist.org/packages/nikolaposa/monolog-factory
-[link-build]: https://travis-ci.com/nikolaposa/monolog-factory
+[link-build]: https://github.com/nikolaposa/monolog-factory/actions
 [link-code-coverage]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/nikolaposa/monolog-factory
 [link-pds]: https://github.com/php-pds/skeleton
