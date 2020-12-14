@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.1.0 - 2020-12-14
+### Added
+  - [9: Allow PHP 8 installations](https://github.com/nikolaposa/monolog-factory/pull/9)
+### Changed
+  - [8: Migration to GitHub Actions](https://github.com/nikolaposa/monolog-factory/pull/8) thanks to [Alejandro Celaya](https://github.com/acelaya)
+  
+### Added
+- Support for Monolog v2
+- Support for configuring Logger timezone
+
 ## 3.0.0 - 2019-11-30
 ### Added
 - Support for Monolog v2
