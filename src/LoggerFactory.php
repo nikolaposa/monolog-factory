@@ -22,7 +22,7 @@ class LoggerFactory
     /** @var ObjectFactory */
     private $objectFactory;
     
-    public function __construct(ObjectFactory $objectFactory = null)
+    public function __construct(?ObjectFactory $objectFactory = null)
     {
         $this->objectFactory = $objectFactory ?? new GenericObjectFactory(new Cascader());
     }
