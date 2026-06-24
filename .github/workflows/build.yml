@@ -22,20 +22,21 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v2
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
           coverage: none
+          extensions: ${{ env.PHP_EXTENSIONS }}
           php-version: ${{ matrix.php-version }}
 
       - name: Determine composer cache directory
         id: determine-composer-cache-directory
-        run: echo "directory=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+        run: echo "::set-output name=directory::$(composer config cache-dir)"
 
       - name: Cache dependencies installed with composer
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: ${{ steps.determine-composer-cache-directory.outputs.directory }}
           key: php-${{ matrix.php-version }}-composer-${{ hashFiles('composer.json') }}
@@ -45,7 +46,7 @@ jobs:
         run: composer install --no-interaction
 
       - name: Run friendsofphp/php-cs-fixer
-        run: composer cs-check
+        run: vendor/bin/php-cs-fixer fix -v --diff --dry-run
 
   tests:
     name: Tests
