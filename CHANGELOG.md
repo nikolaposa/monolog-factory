@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.1.2 - 2026-06-18
+
+### What's Changed
+- Modernize CI workflow and resolve PHP 8.4+ deprecation warning by @arueckauer in https://github.com/nikolaposa/monolog-factory/pull/11
+
 ## 3.1.0 - 2020-12-14
 ### Added
   - [9: Allow PHP 8 installations](https://github.com/nikolaposa/monolog-factory/pull/9)
